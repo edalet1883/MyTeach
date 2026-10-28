@@ -24,7 +24,7 @@ export function Footer() {
           {/* Brend */}
           <div className="md:col-span-2">
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-sm font-extrabold text-white">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-sm font-extrabold text-white">
                 MT
               </div>
               <div className="text-xl font-extrabold tracking-tight text-white">

@@ -129,7 +129,7 @@ export function TeacherRegisterView() {
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-10 sm:px-6">
       <div className="text-center">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-lg font-extrabold text-white">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-lg font-extrabold text-white">
           MT
         </div>
         <h1 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl">{t('treg.title')}</h1>

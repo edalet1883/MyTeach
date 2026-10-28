@@ -62,7 +62,7 @@ export function HomeView() {
   return (
     <div className="flex flex-col">
       {/* ── Hero ── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-emerald-700 via-emerald-600 to-teal-600">
+      <section className="relative overflow-hidden bg-emerald-700 bg-[linear-gradient(135deg,#047857_0%,#059669_52%,#0d9488_100%)]">
         {/* dekorativ elementlər */}
         <div className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-white/10 blur-2xl" aria-hidden="true" />
         <div className="pointer-events-none absolute -bottom-32 right-0 h-96 w-96 rounded-full bg-teal-400/20 blur-3xl" aria-hidden="true" />
@@ -256,9 +256,9 @@ export function HomeView() {
 
       {/* ── Müəllim CTA ── */}
       <section className="mx-auto w-full max-w-7xl px-4 pb-16 sm:px-6">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 to-slate-800 px-6 py-12 text-center sm:px-12">
+        <div className="relative overflow-hidden rounded-3xl bg-slate-900 bg-[linear-gradient(135deg,#0f172a_0%,#1e293b_100%)] px-6 py-12 text-center sm:px-12">
           <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-emerald-500/20 blur-2xl" aria-hidden="true" />
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-lg font-extrabold text-white">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-lg font-extrabold text-white">
             MT
           </div>
           <h2 className="mt-4 text-2xl font-bold text-white sm:text-3xl">{t('how.forTeachers')}</h2>

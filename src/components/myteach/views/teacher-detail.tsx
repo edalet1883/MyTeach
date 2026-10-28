@@ -144,7 +144,7 @@ export function TeacherDetailView() {
 
       {/* Üst kart */}
       <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white">
-        <div className="bg-gradient-to-br from-emerald-700 via-emerald-600 to-teal-600 px-6 pb-16 pt-10 sm:px-10">
+        <div className="bg-emerald-700 bg-[linear-gradient(135deg,#047857_0%,#059669_52%,#0d9488_100%)] px-6 pb-16 pt-10 sm:px-10">
           <div className="flex items-center gap-2 text-emerald-100/90">
             {teacher.emailVerified && (
               <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20">

@@ -103,7 +103,7 @@ export function Header() {
         >
           <div
             className={cn(
-              'flex items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 font-extrabold tracking-tight text-white shadow-md shadow-emerald-200 transition-all duration-300',
+              'flex items-center justify-center rounded-xl bg-emerald-500 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] font-extrabold tracking-tight text-white shadow-md shadow-emerald-200 transition-all duration-300',
               scrolled ? 'h-8 w-8 text-xs' : 'h-9 w-9 text-sm'
             )}
           >
@@ -224,7 +224,7 @@ export function Header() {
             </SheetTrigger>
             <SheetContent side="right" className="w-72 overflow-y-auto">
               <SheetTitle className="flex items-center gap-2">
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-xs font-extrabold text-white">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-xs font-extrabold text-white">
                   MT
                 </span>
                 MyTeach

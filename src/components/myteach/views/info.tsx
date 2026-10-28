@@ -53,7 +53,7 @@ export function HowItWorksView() {
       </div>
 
       {/* Müəllim üçün */}
-      <div className="mt-14 overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 to-slate-800 p-8 sm:p-12">
+      <div className="mt-14 overflow-hidden rounded-3xl bg-slate-900 bg-[linear-gradient(135deg,#0f172a_0%,#1e293b_100%)] p-8 sm:p-12">
         <h2 className="text-2xl font-bold text-white">{t('how.forTeachers')}</h2>
         <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-300 sm:text-base">
           {t('how.forTeachersDesc')}
@@ -133,7 +133,7 @@ export function AboutView() {
   return (
     <div className="mx-auto w-full max-w-4xl px-4 py-12 sm:px-6">
       <div className="text-center">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-xl font-extrabold text-white shadow-lg shadow-emerald-200">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-500 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-xl font-extrabold text-white shadow-lg shadow-emerald-200">
           MT
         </div>
         <h1 className="mt-5 text-3xl font-bold tracking-tight text-slate-900">{t('about.title')}</h1>
@@ -146,7 +146,7 @@ export function AboutView() {
       </div>
 
       <div className="mt-6 grid gap-5 md:grid-cols-2">
-        <div className="rounded-3xl bg-gradient-to-br from-emerald-700 to-teal-600 p-7 text-white">
+        <div className="rounded-3xl bg-emerald-700 bg-[linear-gradient(135deg,#047857_0%,#0d9488_100%)] p-7 text-white">
           <h2 className="text-lg font-bold">{t('about.mission')}</h2>
           <p className="mt-2 text-sm leading-relaxed text-emerald-50/90">{t('about.missionText')}</p>
         </div>
