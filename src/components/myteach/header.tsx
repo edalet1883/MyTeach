@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -26,6 +26,15 @@ export function Header() {
   const t = useT()
   const { lang, setLang, user, view, navigate, setUser, setAuthOpen } = useApp()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+
+  // Scroll ediləndə menyu yığılıb yarımşəffaf üzən pill formasına düşür
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   const navItems: { key: View; labelKey: DictKey }[] = [
     { key: 'home', labelKey: 'nav.home' },
@@ -56,7 +65,8 @@ export function Header() {
             setMobileOpen(false)
           }}
           className={cn(
-            'rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+            'rounded-lg text-sm font-medium transition-colors',
+            scrolled ? 'px-3 py-1.5' : 'px-3 py-2',
             isActive(item.key)
               ? 'bg-emerald-50 text-emerald-700'
               : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
@@ -69,22 +79,41 @@ export function Header() {
   )
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/90 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
+    <header
+      className={cn(
+        'pointer-events-none sticky top-0 z-40 w-full border-b transition-all duration-300',
+        scrolled
+          ? 'border-transparent px-3 pt-3 sm:px-4'
+          : 'border-slate-200 bg-white/90 backdrop-blur-md'
+      )}
+    >
+      <div
+        className={cn(
+          'pointer-events-auto mx-auto flex items-center justify-between gap-4 transition-all duration-300',
+          scrolled
+            ? 'h-12 max-w-6xl rounded-full border border-slate-200/60 bg-white/70 px-4 shadow-lg shadow-slate-900/5 backdrop-blur-xl sm:px-5'
+            : 'h-16 max-w-7xl px-4 sm:px-6'
+        )}
+      >
         {/* Loqo — "MT" monoqramı */}
         <button
           className="flex items-center gap-2"
           onClick={() => navigate('home')}
           aria-label="MyTeach"
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-sm font-extrabold tracking-tight text-white shadow-md shadow-emerald-200">
+          <div
+            className={cn(
+              'flex items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 font-extrabold tracking-tight text-white shadow-md shadow-emerald-200 transition-all duration-300',
+              scrolled ? 'h-8 w-8 text-xs' : 'h-9 w-9 text-sm'
+            )}
+          >
             MT
           </div>
           <div className="text-left">
             <div className="text-lg font-extrabold tracking-tight text-slate-900">
               My<span className="text-emerald-600">Teach</span>
             </div>
-            <div className="hidden text-[10px] leading-none text-slate-400 sm:block">
+            <div className={scrolled ? 'hidden' : 'hidden text-[10px] leading-none text-slate-400 sm:block'}>
               {t('nav.tagline')}
             </div>
           </div>
