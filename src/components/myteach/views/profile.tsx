@@ -14,6 +14,7 @@ import { useApp, Lang, AppUser } from '@/lib/store'
 import { useT, getCategoryName } from '@/lib/i18n'
 import { TeacherCard } from '@/components/myteach/teacher-card'
 import { StarRating } from '@/components/myteach/star-rating'
+import { SubjectIcon } from '@/components/myteach/subject-icon'
 import { api } from '@/lib/api'
 import { toast } from '@/hooks/use-toast'
 
@@ -498,7 +499,12 @@ function TeacherCabinet() {
                 <SelectTrigger className="mt-1.5"><SelectValue placeholder={t('treg.selectPlaceholder')} /></SelectTrigger>
                 <SelectContent className="max-h-60">
                   {cats?.subjects.map((s) => (
-                    <SelectItem key={s.id} value={s.id}>{getCategoryName(s, lang as Lang)}</SelectItem>
+                    <SelectItem key={s.id} value={s.id}>
+                      <span className="flex items-center gap-2">
+                        <SubjectIcon name={s.nameAz} size={18} />
+                        {getCategoryName(s, lang as Lang)}
+                      </span>
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>

@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useApp } from '@/lib/store'
 import { useT, getCategoryName } from '@/lib/i18n'
 import { StarRating } from '@/components/myteach/star-rating'
+import { SubjectIcon } from '@/components/myteach/subject-icon'
 import { api } from '@/lib/api'
 import { toast } from '@/hooks/use-toast'
 
@@ -201,6 +202,7 @@ export function TeacherDetailView() {
           <div className="mt-5 flex flex-wrap gap-2">
             {teacher.subject && (
               <Badge className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100">
+                <SubjectIcon name={teacher.subject.nameAz} size={16} className="mr-1" />
                 {getCategoryName(teacher.subject, lang)}
               </Badge>
             )}

@@ -5,6 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useApp } from '@/lib/store'
 import { useT, getCategoryName, Lang } from '@/lib/i18n'
+import { SubjectIcon } from '@/components/myteach/subject-icon'
 import { api } from '@/lib/api'
 
 interface CatItem {
@@ -96,14 +97,23 @@ export function CategoriesView() {
                     onClick={() => pick(g.key === 'subjects' ? 'subjectId' : g.key === 'sectors' ? 'sectorId' : g.key === 'purposes' ? 'purposeId' : 'cityId', c.id)}
                     className="group flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 text-left transition-all hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md"
                   >
-                    <span
-                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-base font-bold ${
-                        TILE_COLORS[i % TILE_COLORS.length]
-                      }`}
-                      aria-hidden="true"
-                    >
-                      {getCategoryName(c, lang as Lang).charAt(0).toUpperCase()}
-                    </span>
+                    {g.key === 'subjects' ? (
+                      <span
+                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white transition-transform group-hover:scale-110"
+                        aria-hidden="true"
+                      >
+                        <SubjectIcon name={c.nameAz} size={22} />
+                      </span>
+                    ) : (
+                      <span
+                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-base font-bold ${
+                          TILE_COLORS[i % TILE_COLORS.length]
+                        }`}
+                        aria-hidden="true"
+                      >
+                        {getCategoryName(c, lang as Lang).charAt(0).toUpperCase()}
+                      </span>
+                    )}
                     <span className="text-sm font-medium text-slate-700 group-hover:text-emerald-700">
                       {getCategoryName(c, lang)}
                     </span>

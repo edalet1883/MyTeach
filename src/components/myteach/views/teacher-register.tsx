@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { useApp } from '@/lib/store'
 import { useT, getCategoryName } from '@/lib/i18n'
+import { SubjectIcon } from '@/components/myteach/subject-icon'
 import { api } from '@/lib/api'
 import { toast } from '@/hooks/use-toast'
 import type { AppUser } from '@/lib/store'
@@ -232,7 +233,10 @@ export function TeacherRegisterView() {
                 <SelectContent className="max-h-60">
                   {cats?.subjects.map((s) => (
                     <SelectItem key={s.id} value={s.id}>
-                      {getCategoryName(s, lang)}
+                      <span className="flex items-center gap-2">
+                        <SubjectIcon name={s.nameAz} size={18} />
+                        {getCategoryName(s, lang)}
+                      </span>
                     </SelectItem>
                   ))}
                 </SelectContent>

@@ -10,6 +10,7 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/s
 import { useApp } from '@/lib/store'
 import { useT, getCategoryName } from '@/lib/i18n'
 import { TeacherCard, TeacherCardData } from '@/components/myteach/teacher-card'
+import { SubjectIcon } from '@/components/myteach/subject-icon'
 import { api } from '@/lib/api'
 
 interface CatItem {
@@ -116,7 +117,12 @@ export function TeachersView() {
           <SelectContent>
             <SelectItem value="all">{t('common.all')}</SelectItem>
             {cats?.subjects.map((s) => (
-              <SelectItem key={s.id} value={s.id}>{getCategoryName(s, lang)}</SelectItem>
+              <SelectItem key={s.id} value={s.id}>
+                <span className="flex items-center gap-2">
+                  <SubjectIcon name={s.nameAz} size={18} />
+                  {getCategoryName(s, lang)}
+                </span>
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>

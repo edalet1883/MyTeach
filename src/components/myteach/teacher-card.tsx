@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { getCategoryName, useT } from '@/lib/i18n'
 import { useApp, Lang } from '@/lib/store'
 import { StarRating } from './star-rating'
+import { SubjectIcon } from './subject-icon'
 import { cn } from '@/lib/utils'
 import { api } from '@/lib/api'
 import { toast } from '@/hooks/use-toast'
@@ -98,7 +99,8 @@ export function TeacherCard({
                 </span>
               )}
             </div>
-            <div className="mt-0.5 text-sm text-slate-500">
+            <div className="mt-0.5 flex items-center gap-1.5 text-sm text-slate-500">
+              <SubjectIcon name={teacher.subject?.nameAz} size={16} />
               {getCategoryName(teacher.subject, lang as Lang) || t('cat.subjects')}
             </div>
           </div>

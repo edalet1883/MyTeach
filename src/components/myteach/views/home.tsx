@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useApp } from '@/lib/store'
 import { useT, getCategoryName } from '@/lib/i18n'
 import { TeacherCard, TeacherCardData } from '@/components/myteach/teacher-card'
+import { SubjectIcon } from '@/components/myteach/subject-icon'
 import { api } from '@/lib/api'
 
 interface CategoriesResponse {
@@ -15,16 +16,6 @@ interface CategoriesResponse {
   purposes: { id: string; nameAz: string; nameEn: string; nameRu: string }[]
   cities: { id: string; nameAz: string; nameEn: string; nameRu: string }[]
 }
-
-// Kateqoriya kartları üçün rəng palitrası (baş hərf bloku)
-const TILE_COLORS = [
-  'bg-emerald-50 text-emerald-700',
-  'bg-teal-50 text-teal-700',
-  'bg-amber-50 text-amber-700',
-  'bg-cyan-50 text-cyan-700',
-  'bg-lime-50 text-lime-700',
-  'bg-orange-50 text-orange-700',
-]
 
 export function HomeView() {
   const t = useT()
@@ -105,7 +96,10 @@ export function HomeView() {
                   <SelectItem value="all">{t('hero.allSubjects')}</SelectItem>
                   {cats?.subjects.map((s) => (
                     <SelectItem key={s.id} value={s.id}>
-                      {getCategoryName(s, lang)}
+                      <span className="flex items-center gap-2">
+                        <SubjectIcon name={s.nameAz} size={18} />
+                        {getCategoryName(s, lang)}
+                      </span>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -139,8 +133,9 @@ export function HomeView() {
                 <button
                   key={s.id}
                   onClick={() => goToSubject(s.id)}
-                  className="rounded-full border border-white/25 px-3 py-1 text-xs font-medium text-white transition-colors hover:bg-white/15"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-white/25 px-3 py-1 text-xs font-medium text-white transition-colors hover:bg-white/15"
                 >
+                  <SubjectIcon name={s.nameAz} size={14} />
                   {getCategoryName(s, lang)}
                 </button>
               ))}
@@ -181,21 +176,14 @@ export function HomeView() {
         </div>
 
         <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-          {(cats?.subjects.slice(0, 12) ?? []).map((s, i) => (
+          {(cats?.subjects.slice(0, 12) ?? []).map((s) => (
             <button
               key={s.id}
               onClick={() => goToSubject(s.id)}
-              className="group flex flex-col items-center gap-2.5 rounded-2xl border border-slate-200 bg-white p-5 transition-all hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md"
+              className="group flex flex-col items-center gap-3 rounded-2xl bg-slate-900 p-5 transition-all hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-lg hover:shadow-slate-300/60"
             >
-              <span
-                className={`flex h-11 w-11 items-center justify-center rounded-xl text-lg font-bold transition-transform group-hover:scale-110 ${
-                  TILE_COLORS[i % TILE_COLORS.length]
-                }`}
-                aria-hidden="true"
-              >
-                {getCategoryName(s, lang).charAt(0).toUpperCase()}
-              </span>
-              <span className="text-center text-sm font-medium text-slate-700 group-hover:text-emerald-700">
+              <SubjectIcon name={s.nameAz} size={30} className="text-white transition-transform group-hover:scale-110" />
+              <span className="text-center text-sm font-medium text-white/80 group-hover:text-white">
                 {getCategoryName(s, lang)}
               </span>
             </button>

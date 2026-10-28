@@ -23,6 +23,7 @@ async function main() {
     { nameAz: 'İnformatika', nameEn: 'Computer science', nameRu: 'Информатика' },
     { nameAz: 'Alman dili', nameEn: 'German', nameRu: 'Немецкий язык' },
     { nameAz: 'Türk dili', nameEn: 'Turkish', nameRu: 'Турецкий язык' },
+    { nameAz: 'Fransız dili', nameEn: 'French', nameRu: 'Французский язык' },
   ]
   const sectorsData = [
     { nameAz: 'Məktəb', nameEn: 'School', nameRu: 'Школа' },
@@ -48,31 +49,37 @@ async function main() {
     { nameAz: 'Naxçıvan', nameEn: 'Nakhchivan', nameRu: 'Нахчыван' },
   ]
 
-  const existing = await db.subject.count()
-  if (existing > 0) {
-    console.log('Kateqoriyalar artıq mövcuddur — seed atlanır.')
+  // Kateqoriyalar — idempotent (mövcud bazada yalnız əskiklər yaradılır)
+  const subjects: Record<string, string> = {}
+  for (const s of subjectsData) {
+    const found = await db.subject.findFirst({ where: { nameAz: s.nameAz } })
+    const c = found ?? (await db.subject.create({ data: s }))
+    subjects[s.nameAz] = c.id
+  }
+
+  const teacherCount = await db.teacherProfile.count()
+  if (teacherCount > 0) {
+    console.log('Demo müəllimlər artıq mövcuddur — seed qismən atlanır.')
     await seedAdminOnly()
     return
   }
 
-  const subjects: Record<string, string> = {}
-  for (const s of subjectsData) {
-    const c = await db.subject.create({ data: s })
-    subjects[s.nameAz] = c.id
-  }
   const sectors: Record<string, string> = {}
   for (const s of sectorsData) {
-    const c = await db.sector.create({ data: s })
+    const found = await db.sector.findFirst({ where: { nameAz: s.nameAz } })
+    const c = found ?? (await db.sector.create({ data: s }))
     sectors[s.nameAz] = c.id
   }
   const purposes: Record<string, string> = {}
   for (const p of purposesData) {
-    const c = await db.purpose.create({ data: p })
+    const found = await db.purpose.findFirst({ where: { nameAz: p.nameAz } })
+    const c = found ?? (await db.purpose.create({ data: p }))
     purposes[p.nameAz] = c.id
   }
   const cities: Record<string, string> = {}
   for (const c of citiesData) {
-    const r = await db.city.create({ data: c })
+    const found = await db.city.findFirst({ where: { nameAz: c.nameAz } })
+    const r = found ?? (await db.city.create({ data: c }))
     cities[c.nameAz] = r.id
   }
 
