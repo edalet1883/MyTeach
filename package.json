@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "next dev -p 3000 2>&1 | tee dev.log",
-    "build": "prisma generate && prisma db push --accept-data-loss && tsx prisma/seed.ts && next build && cp -r .next/static .next/standalone/.next/ && cp -r public .next/standalone/",
+    "build": "prisma generate && prisma db push --accept-data-loss && tsx prisma/seed.ts && next build && cp -r .next/static .next/standalone/.next/ && cp -r public .next/standalone/ && mkdir -p .next/standalone/node_modules/.prisma/client/db && cp prisma/db/custom.db .next/standalone/node_modules/.prisma/client/db/custom.db",
     "start": "node .next/standalone/server.js",
     "lint": "eslint .",
     "seed": "tsx prisma/seed.ts",
