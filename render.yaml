@@ -1,0 +1,28 @@
+# Render.com Blueprints konfiqurasiyası — MyTeach
+# Deploy: Render Dashboard → New → Blueprint → bu repoya bağlayın
+services:
+  - type: web
+    name: myteach
+    runtime: node
+    plan: free
+    region: frankfurt # istifadəçiyə ən yaxın region seçilə bilər
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: DATABASE_URL
+        value: file:./db/custom.db
+      - key: HOSTNAME
+        value: 0.0.0.0
+      - key: NPM_CONFIG_FUND
+        value: "false"
+      - key: NPM_CONFIG_AUDIT
+        value: "false"
+
+# Qeyd: Öz domen (myteach.dpdns.org) bağlamaq üçün:
+# Render Dashboard → myteach servisi → Settings → Custom Domains → Add → myteach.dpdns.org
+# Sonra dpdns.org idarəetmə panelində CNAME qeydi əlavə edin:
+#   myteach.dpdns.org  CNAME  myteach.onrender.com
