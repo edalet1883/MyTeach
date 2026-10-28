@@ -180,10 +180,12 @@ export function HomeView() {
             <button
               key={s.id}
               onClick={() => goToSubject(s.id)}
-              className="group flex flex-col items-center gap-3 rounded-2xl bg-slate-900 p-5 transition-all hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-lg hover:shadow-slate-300/60"
+              className="group flex flex-col items-center gap-3 rounded-2xl border border-slate-200 bg-white p-5 transition-all hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-100/70"
             >
-              <SubjectIcon name={s.nameAz} size={30} className="text-white transition-transform group-hover:scale-110" />
-              <span className="text-center text-sm font-medium text-white/80 group-hover:text-white">
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-600 text-white transition-transform group-hover:scale-110">
+                <SubjectIcon name={s.nameAz} size={26} />
+              </span>
+              <span className="text-center text-sm font-medium text-slate-700 group-hover:text-emerald-700">
                 {getCategoryName(s, lang)}
               </span>
             </button>
@@ -193,7 +195,7 @@ export function HomeView() {
       </section>
 
       {/* ── Necə işləyir ── */}
-      <section className="border-y border-slate-100 bg-slate-50/60">
+      <section className="border-y border-slate-100 bg-white">
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">

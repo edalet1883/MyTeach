@@ -22,14 +22,6 @@ interface CategoriesResponse {
   cities: CatItem[]
 }
 
-const TILE_COLORS = [
-  'bg-emerald-50 text-emerald-700',
-  'bg-teal-50 text-teal-700',
-  'bg-amber-50 text-amber-700',
-  'bg-cyan-50 text-cyan-700',
-  'bg-lime-50 text-lime-700',
-  'bg-orange-50 text-orange-700',
-]
 
 export function CategoriesView() {
   const t = useT()
@@ -91,7 +83,7 @@ export function CategoriesView() {
           {groups.map((g) => (
             <TabsContent key={g.key} value={g.key} className="mt-8">
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-                {cats[g.key].map((c, i) => (
+                {cats[g.key].map((c) => (
                   <button
                     key={c.id}
                     onClick={() => pick(g.key === 'subjects' ? 'subjectId' : g.key === 'sectors' ? 'sectorId' : g.key === 'purposes' ? 'purposeId' : 'cityId', c.id)}
@@ -99,16 +91,14 @@ export function CategoriesView() {
                   >
                     {g.key === 'subjects' ? (
                       <span
-                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white transition-transform group-hover:scale-110"
+                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white transition-transform group-hover:scale-110"
                         aria-hidden="true"
                       >
                         <SubjectIcon name={c.nameAz} size={22} />
                       </span>
                     ) : (
                       <span
-                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-base font-bold ${
-                          TILE_COLORS[i % TILE_COLORS.length]
-                        }`}
+                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-base font-bold text-emerald-700 transition-transform group-hover:scale-110"
                         aria-hidden="true"
                       >
                         {getCategoryName(c, lang as Lang).charAt(0).toUpperCase()}
