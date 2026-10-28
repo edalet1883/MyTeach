@@ -21,6 +21,8 @@ export interface TeacherCardData {
   sector?: { id: string; nameAz: string; nameEn: string; nameRu: string } | null
   purpose?: { id: string; nameAz: string; nameEn: string; nameRu: string } | null
   city: { id: string; nameAz: string; nameEn: string; nameRu: string } | null
+  lessonFormats?: string
+  verified?: boolean
   avgRating: number
   reviewCount: number
   emailVerified?: boolean
@@ -124,6 +126,15 @@ export function TeacherCard({
         {teacher.city && (
           <Badge variant="secondary" className="bg-slate-100 text-slate-600">
             {getCategoryName(teacher.city, lang as Lang)}
+          </Badge>
+        )}
+        {teacher.lessonFormats && (
+          <Badge className="border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-50">
+            {teacher.lessonFormats === 'ONLINE'
+              ? t('fmt.online')
+              : teacher.lessonFormats === 'IN_PERSON'
+                ? t('fmt.inPerson')
+                : t('fmt.both')}
           </Badge>
         )}
         {teacher.sector && (

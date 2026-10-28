@@ -27,6 +27,8 @@ export async function POST(req: NextRequest) {
     const showWhatsapp = String(form.get('showWhatsapp') || '') === 'true'
     const showPhone = String(form.get('showPhone') || '') === 'true'
     const showEmail = String(form.get('showEmail') || '') === 'true'
+    const rawFormats = String(form.get('lessonFormats') || 'BOTH')
+    const lessonFormats = ['ONLINE', 'IN_PERSON', 'BOTH'].includes(rawFormats) ? rawFormats : 'BOTH'
 
     if (!name || !surname || !email || !phone || !password) {
       return NextResponse.json({ error: 'Bütün sahələr mütləqdir' }, { status: 400 })
@@ -78,6 +80,7 @@ export async function POST(req: NextRequest) {
             phoneContact: phoneContact || phone,
             emailContact: emailContact || email,
             showWhatsapp, showPhone, showEmail,
+            lessonFormats,
           },
         },
       },

@@ -49,6 +49,8 @@ export async function GET(
         sector: teacher.sector,
         purpose: teacher.purpose,
         city: teacher.city,
+        lessonFormats: teacher.lessonFormats,
+        diplomaVerified: teacher.status === 'APPROVED' && !!teacher.diplomaUrl,
         avgRating: Math.round(avg * 10) / 10,
         reviewCount: teacher.reviews.length,
         contacts: {

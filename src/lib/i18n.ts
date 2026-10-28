@@ -253,6 +253,40 @@ export const dict = {
   'tprof.loginFirst': { az: 'Əvvəlcə daxil ol', en: 'Log in first', ru: 'Сначала войдите' },
   'tprof.reviewNote': { az: 'Bir müəllimə yalnız bir rəy yaza bilərsən — yenidən yazsan köhnə rəy yenilənir.', en: 'You can write only one review per teacher — writing again updates your old review.', ru: 'На одного учителя можно оставить один отзыв — повторная запись обновит старый.' },
 
+  // ── Dərs forması ──
+  'fmt.label': { az: 'Dərs forması', en: 'Lesson format', ru: 'Формат занятий' },
+  'fmt.online': { az: 'Online', en: 'Online', ru: 'Онлайн' },
+  'fmt.inPerson': { az: 'Üz-üzə', en: 'In person', ru: 'Лично' },
+  'fmt.both': { az: 'Online + Üz-üzə', en: 'Online + In person', ru: 'Онлайн + Лично' },
+  'fmt.any': { az: 'Hamısı', en: 'Any format', ru: 'Любой' },
+
+  // ── Təsdiq nişanları ──
+  'ver.teacher': { az: 'Təsdiqlənmiş müəllim', en: 'Verified teacher', ru: 'Проверенный учитель' },
+  'ver.diplomaApproved': { az: 'Diplomu təsdiqlənib', en: 'Diploma verified', ru: 'Диплом подтверждён' },
+  'ver.diplomaPending': { az: 'Diplom yoxlanılır', en: 'Diploma under review', ru: 'Диплом проверяется' },
+
+  // ── Şikayət ──
+  'report.button': { az: 'Şikayət et', en: 'Report', ru: 'Жалоба' },
+  'report.title': { az: 'Müəllimə şikayət', en: 'Report teacher', ru: 'Жалоба на учителя' },
+  'report.reason': { az: 'Səbəb', en: 'Reason', ru: 'Причина' },
+  'report.reasonFake': { az: 'Yalançı / saxta profil', en: 'Fake profile', ru: 'Фейковый профиль' },
+  'report.reasonPrice': { az: 'Elanla uyğunsuz ödəniş tələbi', en: 'Pricing differs from the listing', ru: 'Цена не соответствует объявлению' },
+  'report.reasonOffensive': { az: 'Uyğunsuz məzmun və ya davranış', en: 'Inappropriate content or behavior', ru: 'Недопустимый контент или поведение' },
+  'report.reasonOther': { az: 'Digər', en: 'Other', ru: 'Другое' },
+  'report.comment': { az: 'Ətraflı izah (isteğe bağlı)', en: 'Details (optional)', ru: 'Подробности (необязательно)' },
+  'report.submit': { az: 'Şikayəti göndər', en: 'Submit report', ru: 'Отправить жалобу' },
+  'report.sent': { az: 'Şikayətin qeydə alındı — təşəkkürlər!', en: 'Report received — thank you!', ru: 'Жалоба принята — спасибо!' },
+  'report.done': { az: 'Həll edildi', en: 'Resolved', ru: 'Решено' },
+  'report.empty': { az: 'Açıq şikayət yoxdur', en: 'No open reports', ru: 'Нет открытых жалоб' },
+
+  // ── Ödəniş təhlükəsizliyi ──
+  'safety.title': { az: 'Ödənişi əvvəlcədən etməyin!', en: 'Do not pay in advance!', ru: 'Не платите вперёд!' },
+  'safety.text': {
+    az: 'MyTeach ödənişlərə vasitəçilik etmir. Müəllimi yaxşı yoxla, ilk dərsi keçir və yalnız sonra irəli ödəniş et — zərərçəkən olma.',
+    en: 'MyTeach does not handle payments. Check the teacher carefully, take the first lesson, and only then pay ahead — stay safe.',
+    ru: 'MyTeach не участвует в оплатах. Проверьте учителя, проведите первый урок и только потом платите вперёд — будьте осторожны.',
+  },
+
   // ── Rəylər ──
   'rev.anonymous': { az: 'Anonim', en: 'Anonymous', ru: 'Аноним' },
 
@@ -394,6 +428,7 @@ export const dict = {
   'adm.tabUsers': { az: 'İstifadəçilər', en: 'Users', ru: 'Пользователи' },
   'adm.tabCategories': { az: 'Kateqoriyalar', en: 'Categories', ru: 'Категории' },
   'adm.tabReviews': { az: 'Rəylər', en: 'Reviews', ru: 'Отзывы' },
+  'adm.tabReports': { az: 'Şikayətlər', en: 'Reports', ru: 'Жалобы' },
   'adm.approve': { az: 'Təsdiqlə', en: 'Approve', ru: 'Одобрить' },
   'adm.reject': { az: 'Rədd et', en: 'Reject', ru: 'Отклонить' },
   'adm.viewDiploma': { az: 'Diploma bax', en: 'View diploma', ru: 'Посмотреть диплом' },

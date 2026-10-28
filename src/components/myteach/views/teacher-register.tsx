@@ -58,6 +58,7 @@ export function TeacherRegisterView() {
     showWhatsapp: false,
     showPhone: false,
     showEmail: false,
+    lessonFormats: 'BOTH',
   })
   const [diploma, setDiploma] = useState<File | null>(null)
 
@@ -332,6 +333,32 @@ export function TeacherRegisterView() {
                 onChange={set('bio')}
               />
             </div>
+          </div>
+        </section>
+
+        {/* Dərs forması */}
+        <section className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-7">
+          <h2 className="font-semibold text-slate-900">{t('fmt.label')}</h2>
+          <p className="mt-1 text-xs text-slate-500">{t('treg.contactPrefHint')}</p>
+          <div className="mt-4 grid gap-2 sm:grid-cols-3">
+            {([
+              ['ONLINE', t('fmt.online')],
+              ['IN_PERSON', t('fmt.inPerson')],
+              ['BOTH', t('fmt.both')],
+            ] as const).map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setForm((f) => ({ ...f, lessonFormats: value }))}
+                className={
+                  form.lessonFormats === value
+                    ? 'rounded-2xl border-2 border-emerald-600 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700'
+                    : 'rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-600 transition-colors hover:border-emerald-300'
+                }
+              >
+                {label}
+              </button>
+            ))}
           </div>
         </section>
 

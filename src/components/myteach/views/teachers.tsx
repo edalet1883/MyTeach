@@ -65,6 +65,7 @@ export function TeachersView() {
     if (filters.search) params.set('search', filters.search)
     if (filters.minPrice) params.set('minPrice', filters.minPrice)
     if (filters.maxPrice) params.set('maxPrice', filters.maxPrice)
+    if (filters.lessonFormat) params.set('lessonFormat', filters.lessonFormat)
     params.set('sort', filters.sort)
     try {
       const d = await api<{ teachers: TeacherCardData[] }>(`/api/teachers?${params.toString()}`)
@@ -169,6 +170,23 @@ export function TeachersView() {
             {cats?.cities.map((c) => (
               <SelectItem key={c.id} value={c.id}>{getCategoryName(c, lang)}</SelectItem>
             ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div>
+        <Label className="text-xs font-medium text-slate-500">{t('fmt.label')}</Label>
+        <Select
+          value={filters.lessonFormat || 'any'}
+          onValueChange={(v) => setFilters({ lessonFormat: v === 'any' ? '' : (v as 'ONLINE' | 'IN_PERSON') })}
+        >
+          <SelectTrigger className="mt-1.5">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="any">{t('fmt.any')}</SelectItem>
+            <SelectItem value="ONLINE">{t('fmt.online')}</SelectItem>
+            <SelectItem value="IN_PERSON">{t('fmt.inPerson')}</SelectItem>
           </SelectContent>
         </Select>
       </div>

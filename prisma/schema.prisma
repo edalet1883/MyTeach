@@ -56,8 +56,12 @@ model TeacherProfile {
   showPhone    Boolean @default(false)
   showEmail    Boolean @default(false)
 
+  // Dərs forması: ONLINE | IN_PERSON | BOTH
+  lessonFormats String @default("BOTH")
+
   reviews   Review[]
   favorites Favorite[]
+  reports   Report[]
 
   createdAt DateTime @default(now())
 }
@@ -120,4 +124,14 @@ model Favorite {
   createdAt DateTime       @default(now())
 
   @@unique([studentId, teacherId])
+}
+
+model Report {
+  id        String         @id @default(cuid())
+  teacherId String
+  teacher   TeacherProfile @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  reason    String
+  comment   String?
+  status    String         @default("OPEN") // OPEN | RESOLVED
+  createdAt DateTime       @default(now())
 }

@@ -73,6 +73,15 @@ interface AdminReview {
   subject: CatItem | null
 }
 
+interface AdminReport {
+  id: string
+  reason: string
+  comment: string | null
+  status: string
+  createdAt: string
+  teacherName: string
+}
+
 interface Stats {
   approvedTeachers: number
   students: number
@@ -125,6 +134,9 @@ export function AdminView() {
           <TabsTrigger value="reviews" className="rounded-lg px-4">
             {t('adm.tabReviews')}
           </TabsTrigger>
+          <TabsTrigger value="reports" className="rounded-lg px-4">
+            {t('adm.tabReports')}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="pending">
@@ -138,6 +150,9 @@ export function AdminView() {
         </TabsContent>
         <TabsContent value="reviews">
           <ReviewsTab />
+        </TabsContent>
+        <TabsContent value="reports">
+          <ReportsTab />
         </TabsContent>
       </Tabs>
     </div>
@@ -677,6 +692,90 @@ function CategoriesTab() {
 }
 
 // ── Rəylər ──
+function ReportsTab() {
+  const t = useT()
+  const [reports, setReports] = useState<AdminReport[]>([])
+  const [loading, setLoading] = useState(true)
+
+  const load = useCallback(async () => {
+    try {
+      const d = await api<{ reports: AdminReport[] }>('/api/admin/reports')
+      setReports(d.reports)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    load()
+  }, [load])
+
+  const setStatus = async (reportId: string, status: 'OPEN' | 'RESOLVED') => {
+    try {
+      await api('/api/admin/reports', { method: 'PATCH', body: JSON.stringify({ reportId, status }) })
+      await load()
+    } catch (e) {
+      toast({ title: e instanceof Error ? e.message : t('common.error'), variant: 'destructive' })
+    }
+  }
+
+  const reasonLabel: Record<string, string> = {
+    FAKE: t('report.reasonFake'),
+    PRICE: t('report.reasonPrice'),
+    OFFENSIVE: t('report.reasonOffensive'),
+    OTHER: t('report.reasonOther'),
+  }
+
+  if (loading) return <div className="mt-6 text-sm text-slate-400">{t('common.loading')}</div>
+
+  if (reports.length === 0) {
+    return (
+      <div className="mt-6 rounded-3xl border border-dashed border-slate-300 p-12 text-center text-sm text-slate-500">
+        {t('report.empty')}
+      </div>
+    )
+  }
+
+  return (
+    <div className="mt-6 space-y-3">
+      {reports.map((r) => (
+        <div key={r.id} className="rounded-2xl border border-slate-200 bg-white p-5">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge
+                  className={
+                    r.status === 'OPEN'
+                      ? 'bg-rose-100 text-rose-700 hover:bg-rose-100'
+                      : 'bg-emerald-100 text-emerald-700 hover:bg-emerald-100'
+                  }
+                >
+                  {r.status === 'OPEN' ? t('report.button') : t('report.done')}
+                </Badge>
+                <span className="text-sm font-semibold text-slate-900">{reasonLabel[r.reason] ?? r.reason}</span>
+                <span className="text-sm text-slate-400">→</span>
+                <span className="text-sm font-medium text-emerald-700">{r.teacherName}</span>
+              </div>
+              {r.comment && <p className="mt-2 text-sm leading-relaxed text-slate-600">{r.comment}</p>}
+              <div className="mt-1.5 text-xs text-slate-400">
+                {new Date(r.createdAt).toLocaleString()}
+              </div>
+            </div>
+            <Button
+              size="sm"
+              variant={r.status === 'OPEN' ? 'default' : 'outline'}
+              className={r.status === 'OPEN' ? 'bg-emerald-600 hover:bg-emerald-700' : 'text-slate-500'}
+              onClick={() => setStatus(r.id, r.status === 'OPEN' ? 'RESOLVED' : 'OPEN')}
+            >
+              {r.status === 'OPEN' ? t('report.done') : t('report.button')}
+            </Button>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 function ReviewsTab() {
   const t = useT()
   const lang = useApp((s) => s.lang)

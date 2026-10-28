@@ -14,6 +14,7 @@ import { useT, getCategoryName } from '@/lib/i18n'
 import { StarRating } from '@/components/myteach/star-rating'
 import { SubjectIcon } from '@/components/myteach/subject-icon'
 import { api } from '@/lib/api'
+import { cn } from '@/lib/utils'
 import { toast } from '@/hooks/use-toast'
 
 interface ReviewItem {
@@ -36,6 +37,8 @@ interface TeacherDetail {
   sector: { id: string; nameAz: string; nameEn: string; nameRu: string } | null
   purpose: { id: string; nameAz: string; nameEn: string; nameRu: string } | null
   city: { id: string; nameAz: string; nameEn: string; nameRu: string } | null
+  lessonFormats: string
+  diplomaVerified: boolean
   avgRating: number
   reviewCount: number
   contacts: { whatsapp: string | null; phone: string | null; email: string | null }
@@ -53,6 +56,32 @@ export function TeacherDetailView() {
   const [myRating, setMyRating] = useState(0)
   const [myComment, setMyComment] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [favorited, setFavorited] = useState(false)
+  const [reportDialog, setReportDialog] = useState(false)
+  const [reportReason, setReportReason] = useState('')
+  const [reportComment, setReportComment] = useState('')
+  const [reportSending, setReportSending] = useState(false)
+
+  useEffect(() => {
+    api<{ favorites: { teacherId: string }[] }>('/api/favorites')
+      .then((d) => {
+        if (selectedTeacherId) setFavorited(d.favorites.some((f) => f.teacherId === selectedTeacherId))
+      })
+      .catch(() => {})
+  }, [selectedTeacherId])
+
+  const toggleFavorite = async () => {
+    if (!teacher) return
+    try {
+      const d = await api<{ favorited: boolean }>('/api/favorites', {
+        method: 'POST',
+        body: JSON.stringify({ teacherId: teacher.id }),
+      })
+      setFavorited(d.favorited)
+    } catch {
+      toast({ title: t('toast.loginForFavorites') })
+    }
+  }
 
   const load = useCallback(async () => {
     if (!selectedTeacherId) return
@@ -103,6 +132,25 @@ export function TeacherDetailView() {
     }
   }
 
+  const submitReport = async () => {
+    if (!teacher || !reportReason) return
+    setReportSending(true)
+    try {
+      await api('/api/reports', {
+        method: 'POST',
+        body: JSON.stringify({ teacherId: teacher.id, reason: reportReason, comment: reportComment }),
+      })
+      toast({ title: t('report.sent') })
+      setReportDialog(false)
+      setReportReason('')
+      setReportComment('')
+    } catch (e) {
+      toast({ title: e instanceof Error ? e.message : t('common.error'), variant: 'destructive' })
+    } finally {
+      setReportSending(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
@@ -145,15 +193,30 @@ export function TeacherDetailView() {
       {/* Üst kart */}
       <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white">
         <div className="bg-emerald-700 bg-[linear-gradient(135deg,#047857_0%,#059669_52%,#0d9488_100%)] px-6 pb-16 pt-10 sm:px-10">
-          <div className="flex items-center gap-2 text-emerald-100/90">
-            {teacher.emailVerified && (
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-2 text-emerald-50/95">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
                 <span className="css-check text-[10px] text-amber-300" aria-hidden="true" />
+                {t('ver.teacher')}
               </span>
-            )}
-            <span className="text-sm font-medium">{t('tcard.verified')}</span>
-            <span className="mx-1">•</span>
-            <span className="text-sm">{t('hero.badge')}</span>
+              {teacher.diplomaVerified && (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300/40 bg-amber-400/15 px-3 py-1 text-xs font-semibold text-amber-200 backdrop-blur">
+                  <span className="css-check text-[10px]" aria-hidden="true" />
+                  {t('ver.diplomaApproved')}
+                </span>
+              )}
+              <span className="text-xs text-emerald-100/80">{t('hero.badge')}</span>
+            </div>
+            <button
+              onClick={toggleFavorite}
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/25 bg-white/10 backdrop-blur transition-colors hover:bg-white/20"
+              aria-label={favorited ? t('toast.favoriteRemoved') : t('toast.favoriteAdded')}
+            >
+              <span
+                className={cn('css-heart text-lg leading-none', favorited ? 'text-rose-400' : 'text-white')}
+                aria-hidden="true"
+              />
+            </button>
           </div>
         </div>
         <div className="-mt-12 px-6 pb-8 sm:px-10">
@@ -200,6 +263,15 @@ export function TeacherDetailView() {
 
           {/* Kateqoriya nişanları */}
           <div className="mt-5 flex flex-wrap gap-2">
+            {teacher.lessonFormats && (
+              <Badge className="bg-emerald-600 text-white hover:bg-emerald-600">
+                {teacher.lessonFormats === 'ONLINE'
+                  ? t('fmt.online')
+                  : teacher.lessonFormats === 'IN_PERSON'
+                    ? t('fmt.inPerson')
+                    : t('fmt.both')}
+              </Badge>
+            )}
             {teacher.subject && (
               <Badge className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100">
                 <SubjectIcon name={teacher.subject.nameAz} size={16} className="mr-1" />
@@ -263,8 +335,7 @@ export function TeacherDetailView() {
               </h2>
               <Button
                 size="sm"
-                variant="outline"
-                className="border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                className="bg-emerald-600 text-white hover:bg-emerald-700"
                 onClick={openReviewDialog}
               >
                 {t('tprof.writeReview')}
@@ -339,6 +410,23 @@ export function TeacherDetailView() {
           <div className="sticky top-24 rounded-3xl border border-slate-200 bg-white p-6">
             <h2 className="text-lg font-bold text-slate-900">{t('tprof.contact')}</h2>
             <p className="mt-1.5 text-xs leading-relaxed text-slate-400">{t('tprof.contactNote')}</p>
+
+            {/* Ödəniş təhlükəsizliyi */}
+            <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+              <div className="flex items-start gap-2.5">
+                <span
+                  className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-400 text-xs font-black text-amber-900"
+                  aria-hidden="true"
+                >
+                  !
+                </span>
+                <div>
+                  <div className="text-sm font-bold text-amber-900">{t('safety.title')}</div>
+                  <p className="mt-1 text-xs leading-relaxed text-amber-800">{t('safety.text')}</p>
+                </div>
+              </div>
+            </div>
+
             <div className="mt-4 space-y-3">
               {waLink && (
                 <a href={waLink} target="_blank" rel="noopener noreferrer" className="block">
@@ -371,6 +459,14 @@ export function TeacherDetailView() {
             <p className="mt-4 text-center text-xs text-slate-400">
               {t('tprof.reviewNote')}
             </p>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="mt-3 w-full text-xs text-slate-400 hover:bg-rose-50 hover:text-rose-600"
+              onClick={() => setReportDialog(true)}
+            >
+              {t('report.button')}
+            </Button>
           </div>
         </div>
       </div>
@@ -405,6 +501,58 @@ export function TeacherDetailView() {
               {submitting ? '...' : t('tprof.submitReview')}
             </Button>
             <p className="text-center text-xs text-slate-400">{t('tprof.reviewNote')}</p>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Şikayət dialoqu */}
+      <Dialog open={reportDialog} onOpenChange={setReportDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t('report.title')}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label className="text-sm">{t('report.reason')} *</Label>
+              <div className="mt-2 space-y-2">
+                {([
+                  ['FAKE', t('report.reasonFake')],
+                  ['PRICE', t('report.reasonPrice')],
+                  ['OFFENSIVE', t('report.reasonOffensive')],
+                  ['OTHER', t('report.reasonOther')],
+                ] as const).map(([value, label]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setReportReason(value)}
+                    className={cn(
+                      'w-full rounded-xl border px-4 py-2.5 text-left text-sm transition-colors',
+                      reportReason === value
+                        ? 'border-rose-400 bg-rose-50 font-semibold text-rose-700'
+                        : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                    )}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <Label className="text-sm">{t('report.comment')}</Label>
+              <Textarea
+                className="mt-2 min-h-20"
+                value={reportComment}
+                onChange={(e) => setReportComment(e.target.value)}
+                placeholder="..."
+              />
+            </div>
+            <Button
+              className="w-full bg-rose-600 hover:bg-rose-700"
+              disabled={!reportReason || reportSending}
+              onClick={submitReport}
+            >
+              {reportSending ? '...' : t('report.submit')}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

@@ -60,6 +60,21 @@ async function main() {
   const teacherCount = await db.teacherProfile.count()
   if (teacherCount > 0) {
     console.log('Demo müəllimlər artıq mövcuddur — seed qismən atlanır.')
+    // Köhnə demo profilləri yeni sahələrlə tamamla (idempotent)
+    const legacy = await db.teacherProfile.findMany({
+      where: { diplomaUrl: null },
+      orderBy: { createdAt: 'asc' },
+    })
+    const cycle = ['BOTH', 'ONLINE', 'IN_PERSON']
+    for (let i = 0; i < legacy.length; i++) {
+      await db.teacherProfile.update({
+        where: { id: legacy[i].id },
+        data: {
+          diplomaUrl: '/uploads/diplomas/demo-diploma.pdf',
+          lessonFormats: cycle[i % cycle.length],
+        },
+      })
+    }
     await seedAdminOnly()
     return
   }
@@ -111,6 +126,7 @@ async function main() {
       experienceYears: 8, pricePerHour: 25, subject: 'İngilis dili', sector: 'Universitet', purpose: 'Beynəlxalq imtahanlar', city: 'Bakı',
       bio: 'IELTS 8.5 balına malik təcrübəli ingilis dili müəllimiyəm. 8 ildir beynəlxalq imtahanlara hazırlaşıram. Dərslərim interaktiv metodika ilə keçirilir — qrammatika, danışıq və yazı bacarıqları ayrı-ayrı işlənir.',
       showWhatsapp: true, showPhone: true, showEmail: true,
+      lessonFormats: 'BOTH',
       whatsapp: '+994551111001',
       reviews: [5, 5, 4, 5, 5],
     },
@@ -119,6 +135,7 @@ async function main() {
       experienceYears: 12, pricePerHour: 30, subject: 'Riyaziyyat', sector: 'Lisey', purpose: 'Buraxılış imtahanı', city: 'Bakı',
       bio: '12 illik təcrübəyə malik riyaziyyat müəllimiyəm. Buraxılış və qəbul imtahanlarına hazırlıq üzrə yüzlərlə uğur hekayəsi. Mürəkkəb mövzuları sadə dillə izah etmək mənim istiqamətimdir.',
       showWhatsapp: true, showPhone: true, showEmail: false,
+      lessonFormats: 'IN_PERSON',
       whatsapp: '+994551111002',
       reviews: [5, 4, 5, 5],
     },
@@ -127,6 +144,7 @@ async function main() {
       experienceYears: 6, pricePerHour: 20, subject: 'Azərbaycan dili', sector: 'Məktəb', purpose: 'Buraxılış imtahanı', city: 'Sumqayıt',
       bio: 'Azərbaycan dili və ədəbiyyat müəllimiyəm. Buraxılış imtahanına hazırlıqda konkret nəticəyə yönəlmiş proqramla işləyirəm. Hər dərsdə sınaq yazıları və təhlil aparılır.',
       showWhatsapp: true, showPhone: false, showEmail: true,
+      lessonFormats: 'BOTH',
       whatsapp: '+994551111003',
       reviews: [5, 5, 5],
     },
@@ -135,6 +153,7 @@ async function main() {
       experienceYears: 10, pricePerHour: 28, subject: 'Fizika', sector: 'Universitet', purpose: 'Magistratura hazırlığı', city: 'Gəncə',
       bio: 'Fizika üzrə fəlsəfə doktoru. Magistratura hazırlığı və universitet kursları üzrə dərslər keçirirəm. Problem həll etmə metodikası ilə tələbələrimin 90%-i müvəffəqiyyət qazanıb.',
       showWhatsapp: false, showPhone: true, showEmail: true,
+      lessonFormats: 'ONLINE',
       reviews: [4, 5, 4],
     },
     {
@@ -142,6 +161,7 @@ async function main() {
       experienceYears: 5, pricePerHour: 22, subject: 'İngilis dili', sector: 'Məktəb', purpose: 'Danışıq dili', city: 'Bakı',
       bio: 'Danışıq dili üzrə intensiv dərslər. Nerələrin qorxusunu aradan qaldırıram — hər dərs real ssenarilər üzərində qurulur. Uşaqlar və yeniyetmələr üçün xüsusi proqramlarım var.',
       showWhatsapp: true, showPhone: true, showEmail: false,
+      lessonFormats: 'ONLINE',
       whatsapp: '+994551111005',
       reviews: [5, 4],
     },
@@ -150,6 +170,7 @@ async function main() {
       experienceYears: 15, pricePerHour: 35, subject: 'Kimya', sector: 'Lisey', purpose: 'Buraxılış imtahanı', city: 'Bakı',
       bio: '15 illik təcrübə, kimya üzrə metodikaçı. Təcrübəli eksperimentlərlə mövzuları vizuallaşdırıram. Buraxılış imtahanının bütün bölmələri üzrə systematik hazırlıq proqramım mövcuddur.',
       showWhatsapp: true, showPhone: false, showEmail: true,
+      lessonFormats: 'IN_PERSON',
       whatsapp: '+994551111006',
       reviews: [5, 5, 5, 4, 5],
     },
@@ -158,6 +179,7 @@ async function main() {
       experienceYears: 7, pricePerHour: 18, subject: 'Rus dili', sector: 'Məktəb', purpose: 'Məktəb proqramı', city: 'Sumqayıt',
       bio: 'Rus dili müəllimiyəm. Məktəb proqramı ilə paralel olaraq danışıq və qrammatika bacarıqlarını inkişaf etdirirəm. Ev tapşırıqlarına sistemli yanaşma.',
       showWhatsapp: true, showPhone: true, showEmail: false,
+      lessonFormats: 'BOTH',
       whatsapp: '+994551111007',
       reviews: [4, 4, 5],
     },
@@ -166,6 +188,7 @@ async function main() {
       experienceYears: 9, pricePerHour: 26, subject: 'Tarix', sector: 'Universitet', purpose: 'Dövlət qulluğu imtahanı', city: 'Gəncə',
       bio: 'Tarix üzrə dosent. Dövlət qulluğu və magistratura imtahanlarına hazırlıq. Xronologiya və hadisələri yadda saxlamaq üçün xüsusi mnemotexnikalar tətbiq edirəm.',
       showWhatsapp: true, showPhone: true, showEmail: true,
+      lessonFormats: 'BOTH',
       whatsapp: '+994551111008',
       reviews: [5, 4, 4],
     },
@@ -186,6 +209,8 @@ async function main() {
         experienceYears: td.experienceYears,
         pricePerHour: td.pricePerHour,
         status: 'APPROVED',
+        diplomaUrl: '/uploads/diplomas/demo-diploma.pdf',
+        lessonFormats: td.lessonFormats ?? 'BOTH',
         subjectId: subjects[td.subject],
         sectorId: sectors[td.sector],
         purposeId: purposes[td.purpose],

@@ -37,6 +37,7 @@ export interface Filters {
   sort: 'rating' | 'priceAsc' | 'priceDesc' | 'experience'
   minPrice: string
   maxPrice: string
+  lessonFormat: '' | 'ONLINE' | 'IN_PERSON'
 }
 
 interface AppState {
@@ -67,6 +68,7 @@ const defaultFilters: Filters = {
   sort: 'rating',
   minPrice: '',
   maxPrice: '',
+  lessonFormat: '',
 }
 
 export const useApp = create<AppState>((set) => ({

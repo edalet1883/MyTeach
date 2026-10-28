@@ -15,6 +15,7 @@ export async function GET(req: NextRequest) {
     const minPrice = sp.get('minPrice') ? parseInt(sp.get('minPrice')!, 10) : undefined
     const maxPrice = sp.get('maxPrice') ? parseInt(sp.get('maxPrice')!, 10) : undefined
     const sort = sp.get('sort') || 'rating' // rating | priceAsc | priceDesc | experience
+    const lessonFormat = sp.get('lessonFormat') // '' | ONLINE | IN_PERSON
 
     const where: Record<string, unknown> = {
       status: 'APPROVED',
@@ -29,6 +30,9 @@ export async function GET(req: NextRequest) {
       if (minPrice !== undefined && !isNaN(minPrice)) priceFilter.gte = minPrice
       if (maxPrice !== undefined && !isNaN(maxPrice)) priceFilter.lte = maxPrice
       if (Object.keys(priceFilter).length) where.pricePerHour = priceFilter
+    }
+    if (lessonFormat === 'ONLINE' || lessonFormat === 'IN_PERSON') {
+      where.lessonFormats = { in: [lessonFormat, 'BOTH'] }
     }
     if (search) {
       where.OR = [
@@ -68,6 +72,9 @@ export async function GET(req: NextRequest) {
         sector: t.sector,
         purpose: t.purpose,
         city: t.city,
+        lessonFormats: t.lessonFormats,
+        verified: t.status === 'APPROVED',
+        hasDiploma: !!t.diplomaUrl,
         avgRating: Math.round(avg * 10) / 10,
         reviewCount: t._count.reviews,
       }
