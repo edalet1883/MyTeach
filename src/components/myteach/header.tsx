@@ -205,7 +205,7 @@ export function Header() {
               <Button
                 size="sm"
                 className="h-9 rounded-lg bg-emerald-600 text-sm font-medium hover:bg-emerald-700"
-                onClick={() => navigate('student-register')}
+                onClick={() => setAuthOpen('student-register')}
               >
                 {t('nav.register')}
               </Button>
@@ -248,7 +248,7 @@ export function Header() {
                     <Button
                       className="justify-start bg-emerald-600 hover:bg-emerald-700"
                       onClick={() => {
-                        navigate('student-register')
+                        setAuthOpen('student-register')
                         setMobileOpen(false)
                       }}
                     >

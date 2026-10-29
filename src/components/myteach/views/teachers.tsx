@@ -12,6 +12,7 @@ import { useT, getCategoryName } from '@/lib/i18n'
 import { TeacherCard, TeacherCardData } from '@/components/myteach/teacher-card'
 import { SubjectIcon } from '@/components/myteach/subject-icon'
 import { api } from '@/lib/api'
+import { toast } from '@/hooks/use-toast'
 
 interface CatItem {
   id: string
@@ -93,6 +94,7 @@ export function TeachersView() {
         else next.delete(teacherId)
         return next
       })
+      toast({ title: t(d.favorited ? 'toast.favoriteAdded' : 'toast.favoriteRemoved') })
     } catch {
       // qonaq üçün toast teacher-card-da göstərilir
     }

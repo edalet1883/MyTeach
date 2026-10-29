@@ -58,12 +58,14 @@ export function TeacherCard({
   const lang = useApp((s) => s.lang)
   const navigate = useApp((s) => s.navigate)
   const user = useApp((s) => s.user)
+  const setAuthOpen = useApp((s) => s.setAuthOpen)
   const initials = `${teacher.name?.[0] ?? ''}${teacher.surname?.[0] ?? ''}`.toUpperCase()
 
   const handleFavorite = (e: React.MouseEvent) => {
     e.stopPropagation()
     if (!user) {
       toast({ title: t('toast.loginForFavorites') })
+      setAuthOpen('login')
       return
     }
     onToggleFavorite?.(teacher.id)

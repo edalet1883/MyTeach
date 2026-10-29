@@ -26,15 +26,13 @@ async function main() {
     { nameAz: 'Fransız dili', nameEn: 'French', nameRu: 'Французский язык' },
   ]
   const sectorsData = [
-    { nameAz: 'Baxçaya qədər', nameEn: 'Kindergarten', nameRu: 'Детский сад' },
+    { nameAz: 'Uşaq bağçası', nameEn: 'Preschool', nameRu: 'Детский сад' },
     { nameAz: 'İbtidai', nameEn: 'Primary school', nameRu: 'Начальная школа' },
     { nameAz: '9 illik', nameEn: '9-year school', nameRu: '9-летняя школа' },
     { nameAz: '11 illik', nameEn: '11-year school', nameRu: '11-летняя школа' },
     { nameAz: 'Universitet', nameEn: 'University', nameRu: 'Университет' },
-    { nameAz: 'Dil', nameEn: 'Language', nameRu: 'Язык' },
     { nameAz: 'Magistratura', nameEn: "Master's", nameRu: 'Магистратура' },
     { nameAz: 'Doktorantura', nameEn: 'Doctoral studies', nameRu: 'Докторантура' },
-    { nameAz: 'IELTS', nameEn: 'IELTS', nameRu: 'IELTS' },
   ]
   const purposesData = [
     { nameAz: 'Buraxılış imtahanı', nameEn: 'Graduation exam', nameRu: 'Выпускной экзамен' },
@@ -54,12 +52,64 @@ async function main() {
     { nameAz: 'Naxçıvan', nameEn: 'Nakhchivan', nameRu: 'Нахчыван' },
   ]
 
-  // Kateqoriyalar — idempotent (mövcud bazada yalnız əskiklər yaradılır)
-  const subjects: Record<string, string> = {}
-  for (const s of subjectsData) {
-    const found = await db.subject.findFirst({ where: { nameAz: s.nameAz } })
-    const c = found ?? (await db.subject.create({ data: s }))
-    subjects[s.nameAz] = c.id
+  // ── Kateqoriyaların sinxronizasiyası — HƏR deployda işə düşür (demo müəllim olsa belə) ──
+  // Baza köhnə/yarımçıq adlarla qalsa belə, kanonik 3 dilli siyahıya gətirilir.
+  async function syncGroup(
+    table: 'subject' | 'sector' | 'purpose' | 'city',
+    list: { nameAz: string; nameEn: string; nameRu: string }[],
+  ): Promise<Record<string, string>> {
+    const model = db[table] as unknown as {
+      findFirst(args: { where: { nameAz: string } }): Promise<{ id: string; nameEn: string; nameRu: string } | null>
+      create(args: { data: { nameAz: string; nameEn: string; nameRu: string } }): Promise<{ id: string }>
+      update(args: { where: { id: string }; data: { nameEn: string; nameRu: string } }): Promise<unknown>
+      deleteMany(args: { where: { nameAz: { notIn: string[] } } }): Promise<unknown>
+    }
+    const ids: Record<string, string> = {}
+    for (const item of list) {
+      const found = await model.findFirst({ where: { nameAz: item.nameAz } })
+      if (found) {
+        if (found.nameEn !== item.nameEn || found.nameRu !== item.nameRu) {
+          await model.update({ where: { id: found.id }, data: { nameEn: item.nameEn, nameRu: item.nameRu } })
+        }
+        ids[item.nameAz] = found.id
+      } else {
+        const c = await model.create({ data: item })
+        ids[item.nameAz] = c.id
+      }
+    }
+    try {
+      await model.deleteMany({ where: { nameAz: { notIn: list.map((i) => i.nameAz) } } })
+    } catch {
+      // İstifadə olunur (FK) — saxlanılır
+    }
+    return ids
+  }
+
+  const subjects = await syncGroup('subject', subjectsData)
+  const sectors = await syncGroup('sector', sectorsData)
+  const purposes = await syncGroup('purpose', purposesData)
+  const cities = await syncGroup('city', citiesData)
+
+  // ── Köhnə sektor adlarından kanonik bölmələrə bir dəfəlik köçürmə (idempotent) ──
+  const legacySectorMap: Record<string, string> = {
+    'Məktəb': '11 illik',
+    'Lisey': '11 illik',
+    'Kollec': 'Universitet',
+    'Baxçaya qədər': 'Uşaq bağçası',
+    'Dil': 'Universitet',
+    'IELTS': 'Universitet',
+  }
+  for (const [oldName, newName] of Object.entries(legacySectorMap)) {
+    const targetId = sectors[newName]
+    if (!targetId) continue
+    const old = await db.sector.findFirst({ where: { nameAz: oldName } }).catch(() => null)
+    if (!old || old.id === targetId) continue
+    try {
+      await db.teacherProfile.updateMany({ where: { sectorId: old.id }, data: { sectorId: targetId } })
+      await db.sector.delete({ where: { id: old.id } })
+    } catch {
+      // saxlanılır
+    }
   }
 
   const teacherCount = await db.teacherProfile.count()
@@ -82,33 +132,6 @@ async function main() {
     }
     await seedAdminOnly()
     return
-  }
-
-  const sectors: Record<string, string> = {}
-  for (const s of sectorsData) {
-    const found = await db.sector.findFirst({ where: { nameAz: s.nameAz } })
-    const c = found ?? (await db.sector.create({ data: s }))
-    sectors[s.nameAz] = c.id
-  }
-  // Köhnə siyahıda qalıb istifadə olunmayan sektorları təmizlə
-  try {
-    await db.sector.deleteMany({
-      where: { nameAz: { notIn: sectorsData.map((s) => s.nameAz) } },
-    })
-  } catch {
-    // Əgər hələ də istifadə olunursa (FK) — saxla
-  }
-  const purposes: Record<string, string> = {}
-  for (const p of purposesData) {
-    const found = await db.purpose.findFirst({ where: { nameAz: p.nameAz } })
-    const c = found ?? (await db.purpose.create({ data: p }))
-    purposes[p.nameAz] = c.id
-  }
-  const cities: Record<string, string> = {}
-  for (const c of citiesData) {
-    const found = await db.city.findFirst({ where: { nameAz: c.nameAz } })
-    const r = found ?? (await db.city.create({ data: c }))
-    cities[c.nameAz] = r.id
   }
 
   await seedAdminOnly()
@@ -136,7 +159,7 @@ async function main() {
   const teachersData = [
     {
       name: 'Fidan', surname: 'Abdullayeva', email: 'fidan@demo.az', phone: '+994551111001',
-      experienceYears: 8, pricePerHour: 25, pricePeriod: 'HOUR', subject: 'İngilis dili', sector: 'IELTS', purpose: 'Beynəlxalq imtahanlar', city: 'Bakı',
+      experienceYears: 8, pricePerHour: 25, pricePeriod: 'HOUR', subject: 'İngilis dili', sector: 'Universitet', purpose: 'Beynəlxalq imtahanlar', city: 'Bakı',
       bio: 'IELTS 8.5 balına malik təcrübəli ingilis dili müəllimiyəm. 8 ildir beynəlxalq imtahanlara hazırlaşıram. Dərslərim interaktiv metodika ilə keçirilir — qrammatika, danışıq və yazı bacarıqları ayrı-ayrı işlənir.',
       showWhatsapp: true, showPhone: true, showEmail: true,
       lessonFormats: 'BOTH',
@@ -171,7 +194,7 @@ async function main() {
     },
     {
       name: 'Səbinə', surname: 'Hüseynova', email: 'sabina@demo.az', phone: '+994551111005',
-      experienceYears: 5, pricePerHour: 22, pricePeriod: 'HOUR', subject: 'İngilis dili', sector: 'Dil', purpose: 'Danışıq dili', city: 'Bakı',
+      experienceYears: 5, pricePerHour: 22, pricePeriod: 'HOUR', subject: 'İngilis dili', sector: '9 illik', purpose: 'Danışıq dili', city: 'Bakı',
       bio: 'Danışıq dili üzrə intensiv dərslər. Nerələrin qorxusunu aradan qaldırıram — hər dərs real ssenarilər üzərində qurulur. Uşaqlar və yeniyetmələr üçün xüsusi proqramlarım var.',
       showWhatsapp: true, showPhone: true, showEmail: false,
       lessonFormats: 'ONLINE',

@@ -97,7 +97,7 @@ export function ProfileView() {
           <Button className="bg-emerald-600 hover:bg-emerald-700" onClick={() => setAuthOpen('login')}>
             {t('nav.login')}
           </Button>
-          <Button variant="outline" onClick={() => navigate('student-register')}>
+          <Button variant="outline" onClick={() => setAuthOpen('student-register')}>
             {t('auth.registerStudent')}
           </Button>
         </div>

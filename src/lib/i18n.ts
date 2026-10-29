@@ -42,7 +42,7 @@ export const dict = {
 
   // ── Kateqoriyalar ──
   'cat.subjects': { az: 'Fənn', en: 'Subject', ru: 'Предмет' },
-  'cat.sectors': { az: 'Sektor', en: 'Sector', ru: 'Сектор' },
+  'cat.sectors': { az: 'Bölmə', en: 'Section', ru: 'Раздел' },
   'cat.purposes': { az: 'Məqsəd', en: 'Goal', ru: 'Цель' },
   'cat.cities': { az: 'Şəhər', en: 'City', ru: 'Город' },
   'cat.title': { az: 'Kateqoriyalar üzrə axtarış', en: 'Browse by category', ru: 'Поиск по категориям' },
@@ -54,6 +54,11 @@ export const dict = {
   'cat.popularSubjects': { az: 'Populyar fənlər', en: 'Popular subjects', ru: 'Популярные предметы' },
   'cat.viewAll': { az: 'Hamısına bax', en: 'View all', ru: 'Смотреть все' },
   'cat.teachersCount': { az: 'müəllim', en: 'teachers', ru: 'учителей' },
+  'cat.finish': { az: 'Bitir', en: 'Done', ru: 'Готово' },
+  'cat.step': { az: 'Addım', en: 'Step', ru: 'Шаг' },
+  'cat.yourSelections': { az: 'Seçimlərin', en: 'Your selection', ru: 'Ваш выбор' },
+  'cat.prevStep': { az: 'Əvvəlki', en: 'Back', ru: 'Назад' },
+  'cat.selectHint': { az: 'Uyğun müəllimləri tapmaq üçün kateqoriyaları seç — seçəndə növbəti addım açılır, sonda Bitirə bas', en: 'Pick categories to find matching teachers — each pick opens the next step, press Done at the end', ru: 'Выберите категории для поиска учителей — после выбора открывается следующий шаг, в конце нажмите Готово' },
 
   // ── Necə işləyir ──
   'how.title': { az: 'Necə işləyir?', en: 'How it works', ru: 'Как это работает' },
@@ -354,7 +359,7 @@ export const dict = {
     ru: 'Кратко напишите о своём опыте, методах, достижениях...',
   },
   'treg.subject': { az: 'Fənn *', en: 'Subject *', ru: 'Предмет *' },
-  'treg.sector': { az: 'Sektor', en: 'Sector', ru: 'Сектор' },
+  'treg.sector': { az: 'Bölmə', en: 'Section', ru: 'Раздел' },
   'treg.purpose': { az: 'Məqsəd', en: 'Goal', ru: 'Цель' },
   'treg.city': { az: 'Şəhər *', en: 'City *', ru: 'Город *' },
   'treg.contactPrefHint': {

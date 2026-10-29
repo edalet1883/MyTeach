@@ -51,7 +51,7 @@ interface TeacherDetail {
 export function TeacherDetailView() {
   const t = useT()
   const lang = useApp((s) => s.lang)
-  const { selectedTeacherId, navigate, user } = useApp()
+  const { selectedTeacherId, navigate, user, setAuthOpen } = useApp()
   const [teacher, setTeacher] = useState<TeacherDetail | null>(null)
   const [loading, setLoading] = useState(true)
   const [reviewDialog, setReviewDialog] = useState(false)
@@ -74,12 +74,18 @@ export function TeacherDetailView() {
 
   const toggleFavorite = async () => {
     if (!teacher) return
+    if (!user) {
+      toast({ title: t('toast.loginForFavorites') })
+      setAuthOpen('login')
+      return
+    }
     try {
       const d = await api<{ favorited: boolean }>('/api/favorites', {
         method: 'POST',
         body: JSON.stringify({ teacherId: teacher.id }),
       })
       setFavorited(d.favorited)
+      toast({ title: t(d.favorited ? 'toast.favoriteAdded' : 'toast.favoriteRemoved') })
     } catch {
       toast({ title: t('toast.loginForFavorites') })
     }
@@ -192,9 +198,9 @@ export function TeacherDetailView() {
         {t('tprof.backToList')}
       </Button>
 
-      {/* Üst kart */}
+      {/* Üst kart — ad və avatar tam yaşıl hissədə, ağ/yaşıl qarışması yoxdur */}
       <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white">
-        <div className="bg-emerald-700 bg-[linear-gradient(135deg,#047857_0%,#059669_52%,#0d9488_100%)] px-6 pb-16 pt-10 sm:px-10">
+        <div className="bg-emerald-700 bg-[linear-gradient(135deg,#047857_0%,#059669_52%,#0d9488_100%)] px-6 pb-7 pt-6 sm:px-10">
           <div className="flex items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-2 text-emerald-50/95">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
@@ -221,81 +227,85 @@ export function TeacherDetailView() {
               />
             </button>
           </div>
-        </div>
-        <div className="-mt-12 px-6 pb-8 sm:px-10">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-            <div className="flex items-end gap-4">
-              <Avatar className="h-24 w-24 border-4 border-white shadow-lg">
-                <AvatarFallback className="bg-emerald-600 text-3xl font-bold text-white">
-                  {initials}
-                </AvatarFallback>
-              </Avatar>
-              <div className="pb-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">
-                    {teacher.name} {teacher.surname}
-                  </h1>
-                  {teacher.emailVerified && (
-                    <span
-                      className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100"
-                      title={t('tcard.verified')}
-                      aria-label={t('tcard.verified')}
-                    >
-                      <span className="css-check text-xs text-emerald-600" aria-hidden="true" />
-                    </span>
-                  )}
-                </div>
-                <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-500">
-                  <span>{getCategoryName(teacher.city, lang)}</span>
-                  <span className="text-slate-300">|</span>
-                  <span>{getCategoryName(teacher.sector, lang) || '—'}</span>
-                  <span className="text-slate-300">|</span>
-                  <span>
-                    {teacher.experienceYears} {t('tcard.years')}
+
+          {/* Müəllimin adı — üstə, yaşıl fonun tam içinde */}
+          <div className="mt-5 flex items-center gap-4">
+            <Avatar className="h-16 w-16 shrink-0 border-2 border-white/50 shadow-lg sm:h-20 sm:w-20">
+              <AvatarFallback className="bg-white/15 text-2xl font-bold text-white sm:text-3xl">
+                {initials}
+              </AvatarFallback>
+            </Avatar>
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="text-2xl font-bold text-white sm:text-3xl">
+                  {teacher.name} {teacher.surname}
+                </h1>
+                {teacher.emailVerified && (
+                  <span
+                    className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20"
+                    title={t('tcard.verified')}
+                    aria-label={t('tcard.verified')}
+                  >
+                    <span className="css-check text-xs text-white" aria-hidden="true" />
                   </span>
-                </div>
+                )}
+              </div>
+              <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-emerald-50/90">
+                <span>{getCategoryName(teacher.city, lang)}</span>
+                <span className="text-emerald-200/50">|</span>
+                <span>{getCategoryName(teacher.sector, lang) || '—'}</span>
+                <span className="text-emerald-200/50">|</span>
+                <span>
+                  {teacher.experienceYears} {t('tcard.years')}
+                </span>
               </div>
             </div>
-            <div className="text-left sm:text-right">
+          </div>
+        </div>
+
+        {/* Ağ hissə — qiymət və kateqoriya nişanları */}
+        <div className="px-6 pb-8 pt-5 sm:px-10">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="text-left sm:text-right sm:order-2">
               <div className="text-3xl font-extrabold text-emerald-700">
                 {teacher.pricePerHour} <span className="text-base font-medium text-slate-500">AZN{t(`price.${teacher.pricePeriod ?? 'HOUR'}` as DictKey)}</span>
               </div>
               <div className="mt-1 text-xs text-slate-400">{t('treg.priceHint')}</div>
             </div>
-          </div>
 
-          {/* Kateqoriya nişanları */}
-          <div className="mt-5 flex flex-wrap gap-2">
-            {teacher.lessonFormats && (
-              <Badge className="bg-emerald-600 text-white hover:bg-emerald-600">
-                {teacher.lessonFormats === 'ONLINE'
-                  ? t('fmt.online')
-                  : teacher.lessonFormats === 'IN_PERSON'
-                    ? t('fmt.inPerson')
-                    : t('fmt.both')}
-              </Badge>
-            )}
-            {teacher.subject && (
-              <Badge className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100">
-                <SubjectIcon name={teacher.subject.nameAz} size={16} className="mr-1" />
-                {getCategoryName(teacher.subject, lang)}
-              </Badge>
-            )}
-            {teacher.sector && (
-              <Badge variant="secondary">
-                {getCategoryName(teacher.sector, lang)}
-              </Badge>
-            )}
-            {teacher.purpose && (
-              <Badge variant="secondary">
-                {getCategoryName(teacher.purpose, lang)}
-              </Badge>
-            )}
-            {teacher.city && (
-              <Badge variant="secondary">
-                {getCategoryName(teacher.city, lang)}
-              </Badge>
-            )}
+            {/* Kateqoriya nişanları */}
+            <div className="flex flex-wrap gap-2 sm:order-1">
+              {teacher.lessonFormats && (
+                <Badge className="bg-emerald-600 text-white hover:bg-emerald-600">
+                  {teacher.lessonFormats === 'ONLINE'
+                    ? t('fmt.online')
+                    : teacher.lessonFormats === 'IN_PERSON'
+                      ? t('fmt.inPerson')
+                      : t('fmt.both')}
+                </Badge>
+              )}
+              {teacher.subject && (
+                <Badge className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100">
+                  <SubjectIcon name={teacher.subject.nameAz} size={16} className="mr-1" />
+                  {getCategoryName(teacher.subject, lang)}
+                </Badge>
+              )}
+              {teacher.sector && (
+                <Badge variant="secondary">
+                  {getCategoryName(teacher.sector, lang)}
+                </Badge>
+              )}
+              {teacher.purpose && (
+                <Badge variant="secondary">
+                  {getCategoryName(teacher.purpose, lang)}
+                </Badge>
+              )}
+              {teacher.city && (
+                <Badge variant="secondary">
+                  {getCategoryName(teacher.city, lang)}
+                </Badge>
+              )}
+            </div>
           </div>
         </div>
       </div>
