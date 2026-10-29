@@ -1,10 +1,14 @@
 'use client'
 
-import { useApp } from '@/lib/store'
+import { useApp, Lang } from '@/lib/store'
 import { useT, DictKey } from '@/lib/i18n'
+import { MezunLogo } from '@/components/myteach/mezun-logo'
+import { cn } from '@/lib/utils'
 
 export function Footer() {
   const t = useT()
+  const lang = useApp((s) => s.lang)
+  const setLang = useApp((s) => s.setLang)
   const navigate = useApp((s) => s.navigate)
 
   const pages: { key: 'home' | 'categories' | 'teachers' | 'how-it-works' | 'faq' | 'about' | 'contact'; labelKey: DictKey }[] = [
@@ -24,8 +28,8 @@ export function Footer() {
           {/* Brend */}
           <div className="md:col-span-2">
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-sm font-extrabold text-white">
-                MT
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-white">
+                <MezunLogo size={20} />
               </div>
               <div className="text-xl font-extrabold tracking-tight text-white">
                 My<span className="text-emerald-400">Teach</span>
@@ -34,9 +38,6 @@ export function Footer() {
             <p className="mt-4 max-w-md text-sm leading-relaxed text-slate-400">
               {t('footer.description')}
             </p>
-            <div className="mt-4 inline-flex items-center rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-400">
-              {t('footer.free')}
-            </div>
           </div>
 
           {/* Səhifələr */}
@@ -100,8 +101,28 @@ export function Footer() {
 
         <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-slate-800 pt-6 text-xs text-slate-500 sm:flex-row">
           <span>© {new Date().getFullYear()} MyTeach. {t('footer.copyright')}</span>
-          <span>
-            myteach.dpdns.org • Azərbaycan • English • Русский
+          <span className="flex flex-wrap items-center gap-1.5">
+            <span>myteach.dpdns.org</span>
+            <span aria-hidden="true">•</span>
+            {([
+              { code: 'az' as Lang, label: 'Azərbaycan' },
+              { code: 'en' as Lang, label: 'English' },
+              { code: 'ru' as Lang, label: 'Русский' },
+            ]).map((l, i) => (
+              <span key={l.code} className="flex items-center gap-1.5">
+                {i > 0 && <span aria-hidden="true">•</span>}
+                <button
+                  onClick={() => setLang(l.code)}
+                  className={cn(
+                    'transition-colors hover:text-emerald-400',
+                    lang === l.code && 'font-semibold text-emerald-400'
+                  )}
+                  aria-label={`Dili dəyiş: ${l.label}`}
+                >
+                  {l.label}
+                </button>
+              </span>
+            ))}
           </span>
         </div>
       </div>

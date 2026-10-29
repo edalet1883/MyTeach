@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { useApp } from '@/lib/store'
 import { useT, getCategoryName } from '@/lib/i18n'
+import { MezunLogo } from '@/components/myteach/mezun-logo'
 import { SubjectIcon } from '@/components/myteach/subject-icon'
 import { api } from '@/lib/api'
 import { toast } from '@/hooks/use-toast'
@@ -130,8 +131,8 @@ export function TeacherRegisterView() {
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-10 sm:px-6">
       <div className="text-center">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-lg font-extrabold text-white">
-          MT
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-white">
+          <MezunLogo size={28} />
         </div>
         <h1 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl">{t('treg.title')}</h1>
         <p className="mx-auto mt-2 max-w-lg text-sm text-slate-500">{t('treg.subtitle')}</p>

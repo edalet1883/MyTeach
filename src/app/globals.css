@@ -203,3 +203,17 @@
   border-radius: 2px;
   background: currentColor;
 }
+
+/* ── Hero axın ikonları — yumşaq üzən hərəkət ── */
+@keyframes mt-float {
+  0%   { transform: translate3d(0, 0, 0) rotate(-4deg); }
+  50%  { transform: translate3d(10px, -16px, 0) rotate(5deg); }
+  100% { transform: translate3d(0, 0, 0) rotate(-4deg); }
+}
+.mt-float {
+  animation: mt-float 9s ease-in-out infinite;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mt-float { animation: none; }
+}

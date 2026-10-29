@@ -3,9 +3,24 @@
 import { cn } from '@/lib/utils'
 
 /**
- * Ulduz reytinqi — saf CSS formalarla (ikon kitabxanası yoxdur).
+ * Ulduz reytinqi — SVG formalarla (bütün brauzerlərdə dəqiq görünür).
  * Interaktiv olduqda (onChange var) klik ilə qiymət seçilir.
  */
+function StarSvg({ size, className }: { size: number; className?: string }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+    </svg>
+  )
+}
+
 export function StarRating({
   rating,
   size = 16,
@@ -21,7 +36,7 @@ export function StarRating({
 
   return (
     <div
-      className={cn('flex items-center gap-0.5', className)}
+      className={cn('inline-flex items-center gap-0.5 align-middle', className)}
       role={interactive ? 'radiogroup' : undefined}
       aria-label={`${rating} / 5`}
     >
@@ -29,18 +44,18 @@ export function StarRating({
         const fillPct = Math.max(0, Math.min(1, rating - (i - 1))) * 100
         const star = (
           <span
-            className="relative inline-block shrink-0"
+            className="relative inline-block shrink-0 align-middle leading-none"
             style={{ width: size, height: size }}
           >
             {/* boş (boz) ulduz */}
-            <span className="css-star absolute inset-0 bg-slate-300" aria-hidden="true" />
+            <StarSvg size={size} className="absolute inset-0 text-slate-300" />
             {/* dolu (kəhrəba) örtük — üfüqi kəsilir */}
             <span
               className="absolute inset-y-0 left-0 overflow-hidden"
               style={{ width: `${fillPct}%` }}
               aria-hidden="true"
             >
-              <span className="css-star block bg-amber-400" style={{ width: size, height: size }} />
+              <StarSvg size={size} className="block text-amber-400" />
             </span>
           </span>
         )

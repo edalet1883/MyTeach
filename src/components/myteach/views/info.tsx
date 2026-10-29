@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { MezunLogo } from '@/components/myteach/mezun-logo'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -133,8 +134,8 @@ export function AboutView() {
   return (
     <div className="mx-auto w-full max-w-4xl px-4 py-12 sm:px-6">
       <div className="text-center">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-500 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-xl font-extrabold text-white shadow-lg shadow-emerald-200">
-          MT
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-500 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-white shadow-lg shadow-emerald-200">
+          <MezunLogo size={32} />
         </div>
         <h1 className="mt-5 text-3xl font-bold tracking-tight text-slate-900">{t('about.title')}</h1>
       </div>

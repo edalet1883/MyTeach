@@ -12,6 +12,7 @@ import {
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { useApp, View } from '@/lib/store'
 import { useT, DictKey } from '@/lib/i18n'
+import { MezunLogo } from '@/components/myteach/mezun-logo'
 import { cn } from '@/lib/utils'
 import { api } from '@/lib/api'
 import { toast } from '@/hooks/use-toast'
@@ -95,7 +96,7 @@ export function Header() {
             : 'h-16 max-w-7xl px-4 sm:px-6'
         )}
       >
-        {/* Loqo — "MT" monoqramı */}
+        {/* Loqo — mezun (graduation cap) logosu */}
         <button
           className="flex items-center gap-2"
           onClick={() => navigate('home')}
@@ -103,11 +104,11 @@ export function Header() {
         >
           <div
             className={cn(
-              'flex items-center justify-center rounded-xl bg-emerald-500 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] font-extrabold tracking-tight text-white shadow-md shadow-emerald-200 transition-all duration-300',
-              scrolled ? 'h-8 w-8 text-xs' : 'h-9 w-9 text-sm'
+              'flex items-center justify-center rounded-xl bg-emerald-500 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-white shadow-md shadow-emerald-200 transition-all duration-300',
+              scrolled ? 'h-8 w-8' : 'h-9 w-9'
             )}
           >
-            MT
+            <MezunLogo size={scrolled ? 17 : 20} />
           </div>
           <div className="text-left">
             <div className="text-lg font-extrabold tracking-tight text-slate-900">
@@ -224,8 +225,8 @@ export function Header() {
             </SheetTrigger>
             <SheetContent side="right" className="w-72 overflow-y-auto">
               <SheetTitle className="flex items-center gap-2">
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-xs font-extrabold text-white">
-                  MT
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-white">
+                  <MezunLogo size={17} />
                 </span>
                 MyTeach
               </SheetTitle>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import { MezunLogo } from '@/components/myteach/mezun-logo'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -99,8 +100,8 @@ export function AdminView() {
   if (!user || user.role !== 'ADMIN') {
     return (
       <div className="mx-auto max-w-md px-4 py-20 text-center sm:px-6">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-rose-50 text-xl font-bold text-rose-500">
-          MT
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-rose-50 text-rose-500">
+          <MezunLogo size={30} />
         </div>
         <h1 className="mt-5 text-xl font-bold text-slate-900">{t('adm.noAccess')}</h1>
         <p className="mt-2 text-sm text-slate-500">{t('adm.noAccessDesc')}</p>

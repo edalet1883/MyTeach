@@ -8,6 +8,7 @@ import { useApp } from '@/lib/store'
 import { useT, getCategoryName } from '@/lib/i18n'
 import { TeacherCard, TeacherCardData } from '@/components/myteach/teacher-card'
 import { SubjectIcon } from '@/components/myteach/subject-icon'
+import { MezunLogo } from '@/components/myteach/mezun-logo'
 import { api } from '@/lib/api'
 
 interface CategoriesResponse {
@@ -53,6 +54,18 @@ export function HomeView() {
     { value: '100%', label: t('hero.statFree') },
   ]
 
+  // Hero axın ikonları — silindr (pill) formada, yumşaq üzür
+  const floatChips = [
+    { name: 'Riyaziyyat', pos: 'left-[3%] top-[16%]', dur: '9s', delay: '0s' },
+    { name: 'İngilis dili', pos: 'left-[7%] top-[52%]', dur: '11s', delay: '0.8s' },
+    { name: 'Fizika', pos: 'left-[4%] bottom-[12%]', dur: '10s', delay: '1.6s' },
+    { name: 'Kimya', pos: 'right-[4%] top-[20%]', dur: '9.5s', delay: '0.4s' },
+    { name: 'Biologiya', pos: 'right-[8%] top-[56%]', dur: '12s', delay: '1.2s' },
+    { name: 'Tarix', pos: 'right-[3%] bottom-[10%]', dur: '10.5s', delay: '2s' },
+    { name: 'Coğrafiya', pos: 'left-[24%] top-[7%]', dur: '11.5s', delay: '0.6s' },
+    { name: 'İnformatika', pos: 'right-[24%] top-[9%]', dur: '9.8s', delay: '1.8s' },
+  ]
+
   const howSteps = [
     { titleKey: 'how.step1.title' as const, descKey: 'how.step1.desc' as const },
     { titleKey: 'how.step2.title' as const, descKey: 'how.step2.desc' as const },
@@ -66,11 +79,19 @@ export function HomeView() {
         {/* dekorativ elementlər */}
         <div className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-white/10 blur-2xl" aria-hidden="true" />
         <div className="pointer-events-none absolute -bottom-32 right-0 h-96 w-96 rounded-full bg-teal-400/20 blur-3xl" aria-hidden="true" />
-        <div
-          className="pointer-events-none absolute right-8 top-6 hidden select-none text-[11rem] font-extrabold leading-none text-white/5 lg:block"
-          aria-hidden="true"
-        >
-          MT
+
+        {/* Axın kimi üzən fənn ikonları — yalnız geniş ekranda */}
+        <div className="pointer-events-none absolute inset-0 hidden md:block" aria-hidden="true">
+          {floatChips.map((chip, i) => (
+            <span
+              key={i}
+              className={`mt-float absolute flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-medium text-white/70 backdrop-blur-sm ${chip.pos}`}
+              style={{ animationDuration: chip.dur, animationDelay: chip.delay }}
+            >
+              <SubjectIcon name={chip.name} size={15} />
+              {chip.name}
+            </span>
+          ))}
         </div>
 
         <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:py-24">
@@ -157,71 +178,6 @@ export function HomeView() {
         </div>
       </section>
 
-      {/* ── Populyar fənlər ── */}
-      <section className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6">
-        <div className="flex items-end justify-between gap-4">
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-              {t('cat.popularSubjects')}
-            </h2>
-            <p className="mt-1.5 text-sm text-slate-500">{t('cat.subtitle')}</p>
-          </div>
-          <Button
-            variant="ghost"
-            className="hidden text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800 sm:inline-flex"
-            onClick={() => navigate('categories')}
-          >
-            {t('cat.viewAll')}
-          </Button>
-        </div>
-
-        <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-          {(cats?.subjects.slice(0, 12) ?? []).map((s) => (
-            <button
-              key={s.id}
-              onClick={() => goToSubject(s.id)}
-              className="group flex flex-col items-center gap-3 rounded-2xl border border-slate-200 bg-white p-5 transition-all hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-100/70"
-            >
-              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-600 text-white transition-transform group-hover:scale-110">
-                <SubjectIcon name={s.nameAz} size={26} />
-              </span>
-              <span className="text-center text-sm font-medium text-slate-700 group-hover:text-emerald-700">
-                {getCategoryName(s, lang)}
-              </span>
-            </button>
-          ))}
-          {!cats && Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-28 rounded-2xl" />)}
-        </div>
-      </section>
-
-      {/* ── Necə işləyir ── */}
-      <section className="border-y border-slate-100 bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-              {t('how.title')}
-            </h2>
-            <p className="mt-2 text-sm text-slate-500 sm:text-base">{t('how.subtitle')}</p>
-          </div>
-          <div className="mt-10 grid gap-5 md:grid-cols-3">
-            {howSteps.map((step, i) => (
-              <div key={i} className="relative rounded-2xl border border-slate-200 bg-white p-6">
-                <div className="absolute -top-3 left-6 flex h-7 w-7 items-center justify-center rounded-full bg-emerald-600 text-sm font-bold text-white">
-                  {i + 1}
-                </div>
-                <h3 className="mt-2 font-semibold text-slate-900">{t(step.titleKey)}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-500">{t(step.descKey)}</p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-6 text-center">
-            <Button variant="link" className="text-emerald-700" onClick={() => navigate('how-it-works')}>
-              {t('nav.howItWorks')}
-            </Button>
-          </div>
-        </div>
-      </section>
-
       {/* ── Top müəllimlər ── */}
       <section className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6">
         <div className="flex items-end justify-between gap-4">
@@ -254,12 +210,40 @@ export function HomeView() {
         </div>
       </section>
 
+      {/* ── Necə işləyir ── */}
+      <section className="border-y border-slate-100 bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+              {t('how.title')}
+            </h2>
+            <p className="mt-2 text-sm text-slate-500 sm:text-base">{t('how.subtitle')}</p>
+          </div>
+          <div className="mt-10 grid gap-5 md:grid-cols-3">
+            {howSteps.map((step, i) => (
+              <div key={i} className="relative rounded-2xl border border-slate-200 bg-white p-6">
+                <div className="absolute -top-3 left-6 flex h-7 w-7 items-center justify-center rounded-full bg-emerald-600 text-sm font-bold text-white">
+                  {i + 1}
+                </div>
+                <h3 className="mt-2 font-semibold text-slate-900">{t(step.titleKey)}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate-500">{t(step.descKey)}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-6 text-center">
+            <Button variant="link" className="text-emerald-700" onClick={() => navigate('how-it-works')}>
+              {t('nav.howItWorks')}
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* ── Müəllim CTA ── */}
       <section className="mx-auto w-full max-w-7xl px-4 pb-16 sm:px-6">
         <div className="relative overflow-hidden rounded-3xl bg-slate-900 bg-[linear-gradient(135deg,#0f172a_0%,#1e293b_100%)] px-6 py-12 text-center sm:px-12">
           <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-emerald-500/20 blur-2xl" aria-hidden="true" />
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-lg font-extrabold text-white">
-            MT
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-white shadow-lg shadow-emerald-900/30">
+            <MezunLogo size={28} />
           </div>
           <h2 className="mt-4 text-2xl font-bold text-white sm:text-3xl">{t('how.forTeachers')}</h2>
           <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-slate-300 sm:text-base">
