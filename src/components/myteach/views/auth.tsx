@@ -185,7 +185,15 @@ export function StudentRegisterView() {
     form.name && form.surname && form.email.includes('@') && form.phone && form.password.length >= 6
 
   return (
-    <div className="mx-auto w-full max-w-md px-4 py-10 sm:px-6">
+    <div className="relative isolate mx-auto w-full max-w-md px-4 py-10 sm:px-6">
+      {/* Bulanıq duman fonu — şüşə kartların arxasında ətrafı dumanlandırır */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute -right-14 -top-14 h-60 w-60 rounded-full bg-emerald-300/50 blur-3xl" />
+        <div className="absolute -left-16 top-44 h-72 w-72 rounded-full bg-teal-300/40 blur-3xl" />
+        <div className="absolute -right-12 bottom-10 h-64 w-64 rounded-full bg-sky-300/40 blur-3xl" />
+        <div className="absolute -left-12 -bottom-12 h-52 w-52 rounded-full bg-emerald-200/60 blur-3xl" />
+      </div>
+
       {/* Başlıq kartı — yaşıl qradiyent, künc qrafikası ilə */}
       <div className="relative overflow-hidden rounded-3xl bg-emerald-700 bg-[linear-gradient(135deg,#047857_0%,#059669_52%,#0d9488_100%)] px-6 pb-12 pt-9 text-center text-white">
         <MezunArt className="pointer-events-none absolute -right-8 -top-10 w-32 rotate-12 text-white/20 sm:w-36" />

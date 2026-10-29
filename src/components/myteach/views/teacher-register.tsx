@@ -106,8 +106,13 @@ export function TeacherRegisterView() {
 
   if (verifyUrl) {
     return (
-      <div className="mx-auto w-full max-w-md px-4 py-12 sm:px-6">
-        <div className="rounded-3xl border border-emerald-200 bg-emerald-50/50 p-8 text-center shadow-sm">
+      <div className="relative isolate mx-auto w-full max-w-md px-4 py-12 sm:px-6">
+        {/* Bulanıq duman fonu */}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute -right-14 -top-10 h-60 w-60 rounded-full bg-emerald-300/50 blur-3xl" />
+          <div className="absolute -left-14 bottom-0 h-56 w-56 rounded-full bg-teal-300/40 blur-3xl" />
+        </div>
+        <div className="rounded-3xl border border-emerald-200 bg-emerald-50/50 p-8 text-center shadow-sm backdrop-blur-xl">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100">
             <span className="css-check text-xl text-emerald-600" aria-hidden="true" />
           </div>
@@ -130,7 +135,15 @@ export function TeacherRegisterView() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl px-4 py-10 sm:px-6">
+    <div className="relative isolate mx-auto w-full max-w-2xl px-4 py-10 sm:px-6">
+      {/* Bulanıq duman fonu — şüşə bölmələrin arxasında ətrafı dumanlandırır */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute -right-16 -top-16 h-72 w-72 rounded-full bg-emerald-300/50 blur-3xl" />
+        <div className="absolute -left-20 top-1/4 h-80 w-80 rounded-full bg-teal-300/40 blur-3xl" />
+        <div className="absolute -right-16 top-2/3 h-72 w-72 rounded-full bg-sky-300/40 blur-3xl" />
+        <div className="absolute -left-14 -bottom-14 h-64 w-64 rounded-full bg-emerald-200/60 blur-3xl" />
+      </div>
+
       {/* Başlıq kartı — yaşıl qradiyent */}
       <div className="relative overflow-hidden rounded-3xl bg-emerald-700 bg-[linear-gradient(135deg,#047857_0%,#059669_52%,#0d9488_100%)] px-6 py-9 text-center text-white sm:px-10">
         <MezunArt className="pointer-events-none absolute -right-10 -top-12 w-32 rotate-12 text-white/20 sm:w-40" />
