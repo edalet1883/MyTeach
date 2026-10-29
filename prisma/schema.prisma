@@ -36,6 +36,8 @@ model TeacherProfile {
   bio             String?
   experienceYears Int      @default(0)
   pricePerHour    Int      @default(0)
+  // Qiymət dövrü: HOUR | DAY | MONTH | YEAR
+  pricePeriod     String   @default("HOUR")
   diplomaUrl      String?
   // PENDING → EMAIL_VERIFIED(WAITING_ADMIN) → APPROVED | REJECTED
   status          String   @default("PENDING")

@@ -11,7 +11,7 @@ import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 import { useApp, Lang, AppUser } from '@/lib/store'
-import { useT, getCategoryName } from '@/lib/i18n'
+import { useT, getCategoryName, DictKey } from '@/lib/i18n'
 import { TeacherCard } from '@/components/myteach/teacher-card'
 import { StarRating } from '@/components/myteach/star-rating'
 import { MezunLogo } from '@/components/myteach/mezun-logo'
@@ -39,6 +39,7 @@ interface FavItem {
   surname: string
   experienceYears: number
   pricePerHour: number
+  pricePeriod?: string
   subject: CatItem | null
   sector: CatItem | null
   purpose: CatItem | null
@@ -62,6 +63,7 @@ interface MyTeacherProfile {
   bio: string | null
   experienceYears: number
   pricePerHour: number
+  pricePeriod?: string
   status: 'PENDING' | 'WAITING_ADMIN' | 'APPROVED' | 'REJECTED'
   subject: CatItem | null
   sector: CatItem | null
@@ -211,6 +213,7 @@ function StudentCabinet() {
                   surname: f.surname,
                   experienceYears: f.experienceYears,
                   pricePerHour: f.pricePerHour,
+                  pricePeriod: f.pricePeriod,
                   subject: f.subject,
                   sector: f.sector,
                   purpose: f.purpose,
@@ -288,6 +291,7 @@ function TeacherCabinet() {
     bio: '',
     experienceYears: '',
     pricePerHour: '',
+    pricePeriod: 'HOUR',
     subjectId: '',
     sectorId: '',
     purposeId: '',
@@ -315,6 +319,7 @@ function TeacherCabinet() {
           bio: d.profile.bio || '',
           experienceYears: String(d.profile.experienceYears),
           pricePerHour: String(d.profile.pricePerHour),
+          pricePeriod: d.profile.pricePeriod || 'HOUR',
           subjectId: d.profile.subject?.id || '',
           sectorId: d.profile.sector?.id || '',
           purposeId: d.profile.purpose?.id || '',
@@ -448,7 +453,7 @@ function TeacherCabinet() {
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-5">
             <div className="text-xs font-medium text-slate-500">{t('treg.price')}</div>
-            <div className="mt-2 text-2xl font-bold text-slate-900">{profile.pricePerHour} AZN</div>
+            <div className="mt-2 text-2xl font-bold text-slate-900">{profile.pricePerHour} AZN{t(`price.${profile.pricePeriod ?? 'HOUR'}` as DictKey)}</div>
           </div>
         </div>
       )}
@@ -560,6 +565,22 @@ function TeacherCabinet() {
                 value={form.pricePerHour}
                 onChange={(e) => setForm((f) => ({ ...f, pricePerHour: e.target.value }))}
               />
+            </div>
+            <div>
+              <Label>{t('treg.pricePeriod')}</Label>
+              <Select
+                value={form.pricePeriod}
+                onValueChange={(v) => setForm((f) => ({ ...f, pricePeriod: v }))}
+              >
+                <SelectTrigger className="mt-1.5">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {(['HOUR', 'DAY', 'MONTH', 'YEAR'] as const).map((p) => (
+                    <SelectItem key={p} value={p}>{t(`price.period.${p}` as DictKey)}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="sm:col-span-2">
               <Label>{t('treg.bio')}</Label>

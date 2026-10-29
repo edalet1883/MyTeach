@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { useApp } from '@/lib/store'
-import { useT, getCategoryName } from '@/lib/i18n'
+import { useT, getCategoryName, DictKey } from '@/lib/i18n'
 import { MezunLogo } from '@/components/myteach/mezun-logo'
 import { SubjectIcon } from '@/components/myteach/subject-icon'
 import { api } from '@/lib/api'
@@ -48,6 +48,7 @@ export function TeacherRegisterView() {
     password: '',
     experienceYears: '',
     pricePerHour: '',
+    pricePeriod: 'HOUR',
     bio: '',
     subjectId: '',
     sectorId: '',
@@ -130,27 +131,36 @@ export function TeacherRegisterView() {
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-10 sm:px-6">
-      <div className="text-center">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-white">
-          <MezunLogo size={28} />
+      {/* Başlıq kartı — yaşıl qradiyent */}
+      <div className="relative overflow-hidden rounded-3xl bg-emerald-700 bg-[linear-gradient(135deg,#047857_0%,#059669_52%,#0d9488_100%)] px-6 py-9 text-center text-white sm:px-10">
+        <div className="pointer-events-none absolute -right-14 -top-14 h-44 w-44 rounded-full bg-white/10 blur-2xl" aria-hidden="true" />
+        <div className="pointer-events-none absolute -bottom-16 -left-10 h-40 w-40 rounded-full bg-teal-300/20 blur-2xl" aria-hidden="true" />
+        <div className="relative mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-white/25 bg-white/15 shadow-lg backdrop-blur">
+          <MezunLogo size={34} className="text-white" />
         </div>
-        <h1 className="mt-4 text-2xl font-bold text-slate-900 sm:text-3xl">{t('treg.title')}</h1>
-        <p className="mx-auto mt-2 max-w-lg text-sm text-slate-500">{t('treg.subtitle')}</p>
-        <div className="mt-4 inline-flex flex-wrap items-center justify-center gap-2 text-xs">
-          <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-slate-600">
+        <h1 className="relative mt-4 text-2xl font-bold sm:text-3xl">{t('treg.title')}</h1>
+        <p className="relative mx-auto mt-2 max-w-lg text-sm text-emerald-50/90">{t('treg.subtitle')}</p>
+        <div className="relative mt-4 inline-flex flex-wrap items-center justify-center gap-2 text-xs">
+          <span className="inline-flex items-center rounded-full border border-white/25 bg-white/10 px-3 py-1">
             1. {t('how.stage1')}
           </span>
-          <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-slate-600">
+          <span className="inline-flex items-center rounded-full border border-white/25 bg-white/10 px-3 py-1">
             2. {t('how.stage2')}
           </span>
         </div>
       </div>
 
-      <div className="mt-8 space-y-5">
-        {/* Şəxsi məlumatlar */}
-        <section className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-7">
-          <h2 className="font-semibold text-slate-900">{t('treg.sectionPersonal')}</h2>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+      <div className="mt-6 space-y-5">
+        {/* 1 — Şəxsi məlumatlar */}
+        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div className="flex items-center gap-3">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-600 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-sm font-bold text-white">1</span>
+            <div>
+              <h2 className="font-semibold text-slate-900">{t('treg.sectionPersonal')}</h2>
+              <p className="text-xs text-slate-400">{t('auth.name')}, {t('auth.email')}, {t('auth.phone')}</p>
+            </div>
+          </div>
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
             <div>
               <Label htmlFor="tr-name">{t('auth.name')} *</Label>
               <Input id="tr-name" className="mt-1.5" value={form.name} onChange={set('name')} />
@@ -190,7 +200,7 @@ export function TeacherRegisterView() {
                 onChange={set('password')}
               />
             </div>
-            <div>
+            <div className="sm:col-span-2">
               <Label htmlFor="tr-diploma">{t('treg.diploma')}</Label>
               <input
                 ref={fileRef}
@@ -208,21 +218,46 @@ export function TeacherRegisterView() {
               <button
                 type="button"
                 onClick={() => fileRef.current?.click()}
-                className="mt-1.5 flex h-9 w-full items-center rounded-md border border-input bg-transparent px-3 text-sm text-slate-600 transition-colors hover:bg-slate-50"
+                className={
+                  diplomaName
+                    ? 'mt-1.5 flex w-full items-center gap-3 rounded-2xl border-2 border-emerald-400 bg-emerald-50/60 px-4 py-3.5 text-left transition-colors hover:bg-emerald-50'
+                    : 'mt-1.5 flex w-full flex-col items-center justify-center gap-1 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50/60 px-4 py-6 text-center transition-colors hover:border-emerald-400 hover:bg-emerald-50/40'
+                }
               >
-                <span className="truncate">
-                  {diplomaName || t('treg.chooseFile')}
-                </span>
+                {diplomaName ? (
+                  <>
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-100">
+                      <span className="css-check text-sm text-emerald-600" aria-hidden="true" />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block truncate text-sm font-medium text-slate-800">{diplomaName}</span>
+                      <span className="block text-xs text-slate-400">{t('treg.chooseFile')}</span>
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white shadow-sm">
+                      <span className="text-lg" aria-hidden="true">＋</span>
+                    </span>
+                    <span className="text-sm font-medium text-slate-600">{t('treg.chooseFile')}</span>
+                    <span className="text-xs text-slate-400">{t('treg.diplomaHint')}</span>
+                  </>
+                )}
               </button>
-              <p className="mt-1 text-xs text-slate-400">{t('treg.diplomaHint')}</p>
             </div>
           </div>
         </section>
 
-        {/* Peşəkar məlumatlar */}
-        <section className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-7">
-          <h2 className="font-semibold text-slate-900">{t('treg.sectionProfessional')}</h2>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        {/* 2 — Peşəkar məlumatlar */}
+        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div className="flex items-center gap-3">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-600 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-sm font-bold text-white">2</span>
+            <div>
+              <h2 className="font-semibold text-slate-900">{t('treg.sectionProfessional')}</h2>
+              <p className="text-xs text-slate-400">{t('treg.subject')}, {t('treg.city')}, {t('treg.price')}</p>
+            </div>
+          </div>
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
             <div>
               <Label htmlFor="tr-subject">{t('treg.subject')}</Label>
               <Select
@@ -324,6 +359,25 @@ export function TeacherRegisterView() {
               />
               <p className="mt-1 text-xs text-slate-400">{t('treg.priceHint')}</p>
             </div>
+            <div>
+              <Label>{t('treg.pricePeriod')}</Label>
+              <div className="mt-1.5 grid grid-cols-4 gap-1.5">
+                {(['HOUR', 'DAY', 'MONTH', 'YEAR'] as const).map((p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => setForm((f) => ({ ...f, pricePeriod: p }))}
+                    className={
+                      form.pricePeriod === p
+                        ? 'rounded-xl border-2 border-emerald-600 bg-emerald-50 px-2 py-2.5 text-xs font-bold text-emerald-700'
+                        : 'rounded-xl border border-slate-200 bg-white px-2 py-2.5 text-xs font-medium text-slate-500 transition-colors hover:border-emerald-300'
+                    }
+                  >
+                    {t(`price.period.${p}` as DictKey).replace('/','')}
+                  </button>
+                ))}
+              </div>
+            </div>
             <div className="sm:col-span-2">
               <Label htmlFor="tr-bio">{t('treg.bio')}</Label>
               <Textarea
@@ -337,10 +391,15 @@ export function TeacherRegisterView() {
           </div>
         </section>
 
-        {/* Dərs forması */}
-        <section className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-7">
-          <h2 className="font-semibold text-slate-900">{t('fmt.label')}</h2>
-          <p className="mt-1 text-xs text-slate-500">{t('treg.contactPrefHint')}</p>
+        {/* 3 — Dərs forması */}
+        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div className="flex items-center gap-3">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-600 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-sm font-bold text-white">3</span>
+            <div>
+              <h2 className="font-semibold text-slate-900">{t('fmt.label')}</h2>
+              <p className="text-xs text-slate-400">{t('treg.contactPrefHint')}</p>
+            </div>
+          </div>
           <div className="mt-4 grid gap-2 sm:grid-cols-3">
             {([
               ['ONLINE', t('fmt.online')],
@@ -363,10 +422,15 @@ export function TeacherRegisterView() {
           </div>
         </section>
 
-        {/* Əlaqə üsulları */}
-        <section className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-7">
-          <h2 className="font-semibold text-slate-900">{t('treg.sectionContactPref')}</h2>
-          <p className="mt-1 text-xs text-slate-500">{t('treg.contactPrefHint')}</p>
+        {/* 4 — Əlaqə üsulları */}
+        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+          <div className="flex items-center gap-3">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-600 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-sm font-bold text-white">4</span>
+            <div>
+              <h2 className="font-semibold text-slate-900">{t('treg.sectionContactPref')}</h2>
+              <p className="text-xs text-slate-400">{t('treg.contactPrefHint')}</p>
+            </div>
+          </div>
           <div className="mt-4 space-y-3.5">
             <div className="flex items-start gap-3 rounded-2xl border border-slate-200 p-4">
               <Checkbox
@@ -434,7 +498,7 @@ export function TeacherRegisterView() {
 
         <Button
           size="lg"
-          className="w-full rounded-xl bg-emerald-600 py-6 text-base font-semibold hover:bg-emerald-700"
+          className="w-full rounded-xl bg-emerald-600 bg-[linear-gradient(135deg,#059669_0%,#0d9488_100%)] py-6 text-base font-semibold text-white shadow-lg shadow-emerald-200 hover:bg-emerald-700"
           disabled={!valid || loading}
           onClick={submit}
         >

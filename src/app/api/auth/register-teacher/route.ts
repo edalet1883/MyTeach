@@ -29,6 +29,8 @@ export async function POST(req: NextRequest) {
     const showEmail = String(form.get('showEmail') || '') === 'true'
     const rawFormats = String(form.get('lessonFormats') || 'BOTH')
     const lessonFormats = ['ONLINE', 'IN_PERSON', 'BOTH'].includes(rawFormats) ? rawFormats : 'BOTH'
+    const rawPeriod = String(form.get('pricePeriod') || 'HOUR')
+    const pricePeriod = ['HOUR', 'DAY', 'MONTH', 'YEAR'].includes(rawPeriod) ? rawPeriod : 'HOUR'
 
     if (!name || !surname || !email || !phone || !password) {
       return NextResponse.json({ error: 'Bütün sahələr mütləqdir' }, { status: 400 })
@@ -72,6 +74,7 @@ export async function POST(req: NextRequest) {
           create: {
             experienceYears: isNaN(experienceYears) ? 0 : experienceYears,
             pricePerHour: isNaN(pricePerHour) ? 0 : pricePerHour,
+            pricePeriod,
             bio: bio || null,
             diplomaUrl,
             status: 'PENDING', // 1) Gmail təsdiqi gözlənilir

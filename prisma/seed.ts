@@ -26,10 +26,15 @@ async function main() {
     { nameAz: 'Fransız dili', nameEn: 'French', nameRu: 'Французский язык' },
   ]
   const sectorsData = [
-    { nameAz: 'Məktəb', nameEn: 'School', nameRu: 'Школа' },
-    { nameAz: 'Lisey', nameEn: 'Lyceum', nameRu: 'Лицей' },
-    { nameAz: 'Kollec', nameEn: 'College', nameRu: 'Колледж' },
+    { nameAz: 'Baxçaya qədər', nameEn: 'Kindergarten', nameRu: 'Детский сад' },
+    { nameAz: 'İbtidai', nameEn: 'Primary school', nameRu: 'Начальная школа' },
+    { nameAz: '9 illik', nameEn: '9-year school', nameRu: '9-летняя школа' },
+    { nameAz: '11 illik', nameEn: '11-year school', nameRu: '11-летняя школа' },
     { nameAz: 'Universitet', nameEn: 'University', nameRu: 'Университет' },
+    { nameAz: 'Dil', nameEn: 'Language', nameRu: 'Язык' },
+    { nameAz: 'Magistratura', nameEn: "Master's", nameRu: 'Магистратура' },
+    { nameAz: 'Doktorantura', nameEn: 'Doctoral studies', nameRu: 'Докторантура' },
+    { nameAz: 'IELTS', nameEn: 'IELTS', nameRu: 'IELTS' },
   ]
   const purposesData = [
     { nameAz: 'Buraxılış imtahanı', nameEn: 'Graduation exam', nameRu: 'Выпускной экзамен' },
@@ -85,6 +90,14 @@ async function main() {
     const c = found ?? (await db.sector.create({ data: s }))
     sectors[s.nameAz] = c.id
   }
+  // Köhnə siyahıda qalıb istifadə olunmayan sektorları təmizlə
+  try {
+    await db.sector.deleteMany({
+      where: { nameAz: { notIn: sectorsData.map((s) => s.nameAz) } },
+    })
+  } catch {
+    // Əgər hələ də istifadə olunursa (FK) — saxla
+  }
   const purposes: Record<string, string> = {}
   for (const p of purposesData) {
     const found = await db.purpose.findFirst({ where: { nameAz: p.nameAz } })
@@ -123,7 +136,7 @@ async function main() {
   const teachersData = [
     {
       name: 'Fidan', surname: 'Abdullayeva', email: 'fidan@demo.az', phone: '+994551111001',
-      experienceYears: 8, pricePerHour: 25, subject: 'İngilis dili', sector: 'Universitet', purpose: 'Beynəlxalq imtahanlar', city: 'Bakı',
+      experienceYears: 8, pricePerHour: 25, pricePeriod: 'HOUR', subject: 'İngilis dili', sector: 'IELTS', purpose: 'Beynəlxalq imtahanlar', city: 'Bakı',
       bio: 'IELTS 8.5 balına malik təcrübəli ingilis dili müəllimiyəm. 8 ildir beynəlxalq imtahanlara hazırlaşıram. Dərslərim interaktiv metodika ilə keçirilir — qrammatika, danışıq və yazı bacarıqları ayrı-ayrı işlənir.',
       showWhatsapp: true, showPhone: true, showEmail: true,
       lessonFormats: 'BOTH',
@@ -132,7 +145,7 @@ async function main() {
     },
     {
       name: 'Elvin', surname: 'Rəhimov', email: 'elvin@demo.az', phone: '+994551111002',
-      experienceYears: 12, pricePerHour: 30, subject: 'Riyaziyyat', sector: 'Lisey', purpose: 'Buraxılış imtahanı', city: 'Bakı',
+      experienceYears: 12, pricePerHour: 30, pricePeriod: 'HOUR', subject: 'Riyaziyyat', sector: '11 illik', purpose: 'Buraxılış imtahanı', city: 'Bakı',
       bio: '12 illik təcrübəyə malik riyaziyyat müəllimiyəm. Buraxılış və qəbul imtahanlarına hazırlıq üzrə yüzlərlə uğur hekayəsi. Mürəkkəb mövzuları sadə dillə izah etmək mənim istiqamətimdir.',
       showWhatsapp: true, showPhone: true, showEmail: false,
       lessonFormats: 'IN_PERSON',
@@ -141,7 +154,7 @@ async function main() {
     },
     {
       name: 'Günel', surname: 'İsmayılova', email: 'gunel@demo.az', phone: '+994551111003',
-      experienceYears: 6, pricePerHour: 20, subject: 'Azərbaycan dili', sector: 'Məktəb', purpose: 'Buraxılış imtahanı', city: 'Sumqayıt',
+      experienceYears: 6, pricePerHour: 20, pricePeriod: 'HOUR', subject: 'Azərbaycan dili', sector: '9 illik', purpose: 'Buraxılış imtahanı', city: 'Sumqayıt',
       bio: 'Azərbaycan dili və ədəbiyyat müəllimiyəm. Buraxılış imtahanına hazırlıqda konkret nəticəyə yönəlmiş proqramla işləyirəm. Hər dərsdə sınaq yazıları və təhlil aparılır.',
       showWhatsapp: true, showPhone: false, showEmail: true,
       lessonFormats: 'BOTH',
@@ -150,7 +163,7 @@ async function main() {
     },
     {
       name: 'Kamran', surname: 'Cəfərov', email: 'kamran@demo.az', phone: '+994551111004',
-      experienceYears: 10, pricePerHour: 28, subject: 'Fizika', sector: 'Universitet', purpose: 'Magistratura hazırlığı', city: 'Gəncə',
+      experienceYears: 10, pricePerHour: 500, pricePeriod: 'MONTH', subject: 'Fizika', sector: 'Universitet', purpose: 'Magistratura hazırlığı', city: 'Gəncə',
       bio: 'Fizika üzrə fəlsəfə doktoru. Magistratura hazırlığı və universitet kursları üzrə dərslər keçirirəm. Problem həll etmə metodikası ilə tələbələrimin 90%-i müvəffəqiyyət qazanıb.',
       showWhatsapp: false, showPhone: true, showEmail: true,
       lessonFormats: 'ONLINE',
@@ -158,7 +171,7 @@ async function main() {
     },
     {
       name: 'Səbinə', surname: 'Hüseynova', email: 'sabina@demo.az', phone: '+994551111005',
-      experienceYears: 5, pricePerHour: 22, subject: 'İngilis dili', sector: 'Məktəb', purpose: 'Danışıq dili', city: 'Bakı',
+      experienceYears: 5, pricePerHour: 22, pricePeriod: 'HOUR', subject: 'İngilis dili', sector: 'Dil', purpose: 'Danışıq dili', city: 'Bakı',
       bio: 'Danışıq dili üzrə intensiv dərslər. Nerələrin qorxusunu aradan qaldırıram — hər dərs real ssenarilər üzərində qurulur. Uşaqlar və yeniyetmələr üçün xüsusi proqramlarım var.',
       showWhatsapp: true, showPhone: true, showEmail: false,
       lessonFormats: 'ONLINE',
@@ -167,7 +180,7 @@ async function main() {
     },
     {
       name: 'Orxan', surname: 'Mikayılov', email: 'orxan@demo.az', phone: '+994551111006',
-      experienceYears: 15, pricePerHour: 35, subject: 'Kimya', sector: 'Lisey', purpose: 'Buraxılış imtahanı', city: 'Bakı',
+      experienceYears: 15, pricePerHour: 35, pricePeriod: 'HOUR', subject: 'Kimya', sector: '11 illik', purpose: 'Buraxılış imtahanı', city: 'Bakı',
       bio: '15 illik təcrübə, kimya üzrə metodikaçı. Təcrübəli eksperimentlərlə mövzuları vizuallaşdırıram. Buraxılış imtahanının bütün bölmələri üzrə systematik hazırlıq proqramım mövcuddur.',
       showWhatsapp: true, showPhone: false, showEmail: true,
       lessonFormats: 'IN_PERSON',
@@ -176,7 +189,7 @@ async function main() {
     },
     {
       name: 'Nərmin', surname: 'Səfərova', email: 'nermin@demo.az', phone: '+994551111007',
-      experienceYears: 7, pricePerHour: 18, subject: 'Rus dili', sector: 'Məktəb', purpose: 'Məktəb proqramı', city: 'Sumqayıt',
+      experienceYears: 7, pricePerHour: 18, pricePeriod: 'HOUR', subject: 'Rus dili', sector: 'İbtidai', purpose: 'Məktəb proqramı', city: 'Sumqayıt',
       bio: 'Rus dili müəllimiyəm. Məktəb proqramı ilə paralel olaraq danışıq və qrammatika bacarıqlarını inkişaf etdirirəm. Ev tapşırıqlarına sistemli yanaşma.',
       showWhatsapp: true, showPhone: true, showEmail: false,
       lessonFormats: 'BOTH',
@@ -185,7 +198,7 @@ async function main() {
     },
     {
       name: 'Tural', surname: 'Bəkirov', email: 'tural@demo.az', phone: '+994551111008',
-      experienceYears: 9, pricePerHour: 26, subject: 'Tarix', sector: 'Universitet', purpose: 'Dövlət qulluğu imtahanı', city: 'Gəncə',
+      experienceYears: 9, pricePerHour: 4800, pricePeriod: 'YEAR', subject: 'Tarix', sector: 'Doktorantura', purpose: 'Dövlət qulluğu imtahanı', city: 'Gəncə',
       bio: 'Tarix üzrə dosent. Dövlət qulluğu və magistratura imtahanlarına hazırlıq. Xronologiya və hadisələri yadda saxlamaq üçün xüsusi mnemotexnikalar tətbiq edirəm.',
       showWhatsapp: true, showPhone: true, showEmail: true,
       lessonFormats: 'BOTH',
@@ -208,6 +221,7 @@ async function main() {
         bio: td.bio,
         experienceYears: td.experienceYears,
         pricePerHour: td.pricePerHour,
+        pricePeriod: td.pricePeriod ?? 'HOUR',
         status: 'APPROVED',
         diplomaUrl: '/uploads/diplomas/demo-diploma.pdf',
         lessonFormats: td.lessonFormats ?? 'BOTH',

@@ -50,7 +50,7 @@ export async function PUT(req: NextRequest) {
   try {
     const body = await req.json()
     const {
-      bio, experienceYears, pricePerHour,
+      bio, experienceYears, pricePerHour, pricePeriod,
       subjectId, sectorId, purposeId, cityId,
       whatsapp, phoneContact, emailContact,
       showWhatsapp, showPhone, showEmail,
@@ -61,6 +61,7 @@ export async function PUT(req: NextRequest) {
       bio: bio?.trim() || null,
       experienceYears: parseInt(String(experienceYears), 10) || 0,
       pricePerHour: parseInt(String(pricePerHour), 10) || 0,
+      pricePeriod: ['HOUR', 'DAY', 'MONTH', 'YEAR'].includes(String(pricePeriod)) ? String(pricePeriod) : 'HOUR',
       subjectId: subjectId || null,
       sectorId: sectorId || null,
       purposeId: purposeId || null,

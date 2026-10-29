@@ -2,10 +2,11 @@
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { getCategoryName, useT } from '@/lib/i18n'
+import { getCategoryName, useT, DictKey } from '@/lib/i18n'
 import { useApp, Lang } from '@/lib/store'
 import { StarRating } from './star-rating'
 import { SubjectIcon } from './subject-icon'
+import { HeartIcon } from './heart-icon'
 import { cn } from '@/lib/utils'
 import { api } from '@/lib/api'
 import { toast } from '@/hooks/use-toast'
@@ -22,6 +23,7 @@ export interface TeacherCardData {
   purpose?: { id: string; nameAz: string; nameEn: string; nameRu: string } | null
   city: { id: string; nameAz: string; nameEn: string; nameRu: string } | null
   lessonFormats?: string
+  pricePeriod?: string
   verified?: boolean
   avgRating: number
   reviewCount: number
@@ -112,12 +114,13 @@ export function TeacherCard({
           className="rounded-full p-2 transition-colors hover:bg-rose-50"
           aria-label={favorited ? t('toast.favoriteRemoved') : t('toast.favoriteAdded')}
         >
-          <span
+          <HeartIcon
+            size={20}
+            filled={favorited}
             className={cn(
-              'css-heart text-lg leading-none transition-colors',
+              'transition-colors',
               favorited ? 'text-rose-500' : 'text-slate-300 group-hover:text-rose-300'
             )}
-            aria-hidden="true"
           />
         </button>
       </div>
@@ -155,7 +158,7 @@ export function TeacherCard({
         </span>
         <div className="text-right">
           <span className="text-xl font-bold text-emerald-700">{teacher.pricePerHour}</span>
-          <span className="ml-0.5 text-sm text-slate-500">AZN{t('tcard.hour')}</span>
+          <span className="ml-0.5 text-sm text-slate-500">AZN{t(`price.${teacher.pricePeriod ?? 'HOUR'}` as DictKey)}</span>
         </div>
       </div>
 

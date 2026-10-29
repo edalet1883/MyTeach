@@ -68,6 +68,7 @@ export async function GET(req: NextRequest) {
         bio: t.bio,
         experienceYears: t.experienceYears,
         pricePerHour: t.pricePerHour,
+        pricePeriod: t.pricePeriod,
         subject: t.subject,
         sector: t.sector,
         purpose: t.purpose,

@@ -45,6 +45,7 @@ export async function GET(
         bio: teacher.bio,
         experienceYears: teacher.experienceYears,
         pricePerHour: teacher.pricePerHour,
+        pricePeriod: teacher.pricePeriod,
         subject: teacher.subject,
         sector: teacher.sector,
         purpose: teacher.purpose,

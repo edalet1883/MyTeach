@@ -191,6 +191,14 @@ export const dict = {
 
   // ── Müəllim kartı / siyahısı ──
   'tcard.hour': { az: '/saat', en: '/hour', ru: '/час' },
+  'price.HOUR': { az: '/saat', en: '/hour', ru: '/час' },
+  'price.DAY': { az: '/gün', en: '/day', ru: '/день' },
+  'price.MONTH': { az: '/ay', en: '/month', ru: '/месяц' },
+  'price.YEAR': { az: '/il', en: '/year', ru: '/год' },
+  'price.period.HOUR': { az: 'Saatlıq', en: 'Hourly', ru: 'За час' },
+  'price.period.DAY': { az: 'Günlük', en: 'Daily', ru: 'За день' },
+  'price.period.MONTH': { az: 'Aylıq', en: 'Monthly', ru: 'За месяц' },
+  'price.period.YEAR': { az: 'İllik', en: 'Yearly', ru: 'За год' },
   'tcard.years': { az: 'il təcrübə', en: 'yrs experience', ru: 'лет опыта' },
   'tcard.viewProfile': { az: 'Profili gör', en: 'View profile', ru: 'Смотреть профиль' },
   'tcard.noReviews': { az: 'Rəy yoxdur', en: 'No reviews yet', ru: 'Отзывов нет' },
@@ -333,8 +341,9 @@ export const dict = {
   'treg.diplomaHint': { az: 'PDF, JPG və ya PNG — maksimum 5MB. Admin tərəfindən yoxlanır.', en: 'PDF, JPG or PNG — max 5MB. Checked by admin.', ru: 'PDF, JPG или PNG — макс. 5MB. Проверяется админом.' },
   'treg.experience': { az: 'Təcrübə ili', en: 'Years of experience', ru: 'Стаж (лет)' },
   'treg.experienceHint': { az: 'Neçə ildir müəllimlik edirsən?', en: 'How many years have you been teaching?', ru: 'Сколько лет вы преподаёте?' },
-  'treg.price': { az: 'Qiymət (saatlıq, AZN)', en: 'Price (hourly, AZN)', ru: 'Цена (за час, AZN)' },
+  'treg.price': { az: 'Qiymət (AZN)', en: 'Price (AZN)', ru: 'Цена (AZN)' },
   'treg.priceHint': { az: 'Yalnız məlumat göstəricisidir — sayt ödəniş almır', en: 'Informational only — the site takes no payment', ru: 'Только информационно — сайт не берёт оплату' },
+  'treg.pricePeriod': { az: 'Qiymət dövrü', en: 'Price period', ru: 'Период цены' },
   'treg.bio': { az: 'Özün haqqında', en: 'About yourself', ru: 'О себе' },
   'treg.bioPlaceholder': {
     az: 'Təcrübən, metodikan, nailiyyətlərin haqqında qısa yaz...',

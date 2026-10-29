@@ -37,6 +37,7 @@ export async function GET() {
         surname: f.teacher.user.surname,
         experienceYears: f.teacher.experienceYears,
         pricePerHour: f.teacher.pricePerHour,
+        pricePeriod: f.teacher.pricePeriod,
         subject: f.teacher.subject,
         sector: f.teacher.sector,
         purpose: f.teacher.purpose,

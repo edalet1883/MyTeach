@@ -10,9 +10,10 @@ import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Textarea } from '@/components/ui/textarea'
 import { useApp } from '@/lib/store'
-import { useT, getCategoryName } from '@/lib/i18n'
+import { useT, getCategoryName, DictKey } from '@/lib/i18n'
 import { StarRating } from '@/components/myteach/star-rating'
 import { SubjectIcon } from '@/components/myteach/subject-icon'
+import { HeartIcon } from '@/components/myteach/heart-icon'
 import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { toast } from '@/hooks/use-toast'
@@ -33,6 +34,7 @@ interface TeacherDetail {
   bio: string | null
   experienceYears: number
   pricePerHour: number
+  pricePeriod?: string
   subject: { id: string; nameAz: string; nameEn: string; nameRu: string } | null
   sector: { id: string; nameAz: string; nameEn: string; nameRu: string } | null
   purpose: { id: string; nameAz: string; nameEn: string; nameRu: string } | null
@@ -212,9 +214,10 @@ export function TeacherDetailView() {
               className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/25 bg-white/10 backdrop-blur transition-colors hover:bg-white/20"
               aria-label={favorited ? t('toast.favoriteRemoved') : t('toast.favoriteAdded')}
             >
-              <span
-                className={cn('css-heart text-lg leading-none', favorited ? 'text-rose-400' : 'text-white')}
-                aria-hidden="true"
+              <HeartIcon
+                size={20}
+                filled={favorited}
+                className={favorited ? 'text-rose-400' : 'text-white'}
               />
             </button>
           </div>
@@ -255,7 +258,7 @@ export function TeacherDetailView() {
             </div>
             <div className="text-left sm:text-right">
               <div className="text-3xl font-extrabold text-emerald-700">
-                {teacher.pricePerHour} <span className="text-base font-medium text-slate-500">AZN{t('tcard.hour')}</span>
+                {teacher.pricePerHour} <span className="text-base font-medium text-slate-500">AZN{t(`price.${teacher.pricePeriod ?? 'HOUR'}` as DictKey)}</span>
               </div>
               <div className="mt-1 text-xs text-slate-400">{t('treg.priceHint')}</div>
             </div>
@@ -315,7 +318,7 @@ export function TeacherDetailView() {
               </div>
               <div className="rounded-2xl bg-slate-50 p-4">
                 <div className="text-xs font-medium text-slate-500">{t('treg.price')}</div>
-                <div className="mt-1.5 text-xl font-bold text-slate-900">{teacher.pricePerHour} AZN</div>
+                <div className="mt-1.5 text-xl font-bold text-slate-900">{teacher.pricePerHour} AZN{t(`price.${teacher.pricePeriod ?? 'HOUR'}` as DictKey)}</div>
               </div>
               <div className="rounded-2xl bg-slate-50 p-4">
                 <div className="text-xs font-medium text-slate-500">{t('tprof.memberSince')}</div>

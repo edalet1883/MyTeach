@@ -96,6 +96,10 @@ export function HomeView() {
 
         <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:py-24">
           <div className="mx-auto max-w-3xl text-center">
+            {/* Hero logosu — mezun */}
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/25 bg-white/15 shadow-lg backdrop-blur">
+              <MezunLogo size={34} className="text-white" />
+            </div>
             <div className="mb-5 inline-flex items-center rounded-full border border-white/25 bg-white/15 px-4 py-1.5 text-sm font-medium text-white backdrop-blur">
               {t('hero.badge')}
             </div>
