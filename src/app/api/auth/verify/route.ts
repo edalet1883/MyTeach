@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { notifyAdminNewTeacher } from '@/lib/telegrambot'
 
 export const dynamic = 'force-dynamic'
 
@@ -28,6 +29,8 @@ export async function GET(req: NextRequest) {
         where: { userId: updated.id },
         data: { status: 'WAITING_ADMIN' },
       })
+      // Adminin Telegram-ına kart + diplom göndərilir (xəta olsa sayt dayanmır)
+      await notifyAdminNewTeacher(updated.id)
     }
 
     return NextResponse.json({
