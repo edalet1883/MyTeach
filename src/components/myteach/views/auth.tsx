@@ -51,7 +51,7 @@ export function LoginDialog() {
 
   return (
     <Dialog open={authOpen === 'login'} onOpenChange={(o) => !o && setAuthOpen(null)}>
-      <DialogContent className="w-full gap-0 overflow-hidden p-0 sm:max-w-2xl">
+      <DialogContent className="w-full gap-0 overflow-hidden border-slate-200/60 bg-white/70 p-0 shadow-xl shadow-slate-900/10 backdrop-blur-xl sm:max-w-2xl">
         <DialogHeader className="sr-only">
           <DialogTitle>{t('auth.loginTitle')}</DialogTitle>
           <DialogDescription>{t('auth.loginSubtitle')}</DialogDescription>
@@ -94,7 +94,7 @@ export function LoginDialog() {
                 <Input
                   id="login-email"
                   type="email"
-                  className="mt-1.5 h-11 rounded-xl"
+                  className="mt-1.5 h-11 rounded-xl bg-white/60"
                   placeholder="example@gmail.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -106,7 +106,7 @@ export function LoginDialog() {
                 <Input
                   id="login-password"
                   type="password"
-                  className="mt-1.5 h-11 rounded-xl"
+                  className="mt-1.5 h-11 rounded-xl bg-white/60"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
@@ -197,16 +197,16 @@ export function StudentRegisterView() {
       </div>
 
       {/* Ağ form kartı — başlıq kartına qismən üst-üstə düşür */}
-      <div className="relative -mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+      <div className="relative -mt-6 rounded-3xl border border-slate-200/60 bg-white/70 p-6 shadow-lg shadow-slate-900/5 backdrop-blur-xl sm:p-8">
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label htmlFor="sr-name">{t('auth.name')}</Label>
-              <Input id="sr-name" className="mt-1.5 rounded-xl" value={form.name} onChange={set('name')} />
+              <Input id="sr-name" className="mt-1.5 rounded-xl bg-white/60" value={form.name} onChange={set('name')} />
             </div>
             <div>
               <Label htmlFor="sr-surname">{t('auth.surname')}</Label>
-              <Input id="sr-surname" className="mt-1.5 rounded-xl" value={form.surname} onChange={set('surname')} />
+              <Input id="sr-surname" className="mt-1.5 rounded-xl bg-white/60" value={form.surname} onChange={set('surname')} />
             </div>
           </div>
           <div>
@@ -214,7 +214,7 @@ export function StudentRegisterView() {
             <Input
               id="sr-email"
               type="email"
-              className="mt-1.5 rounded-xl"
+              className="mt-1.5 rounded-xl bg-white/60"
               placeholder="example@gmail.com"
               value={form.email}
               onChange={set('email')}
@@ -225,7 +225,7 @@ export function StudentRegisterView() {
             <Label htmlFor="sr-phone">{t('auth.phone')}</Label>
             <Input
               id="sr-phone"
-              className="mt-1.5 rounded-xl"
+              className="mt-1.5 rounded-xl bg-white/60"
               placeholder="+994 50 123 45 67"
               value={form.phone}
               onChange={set('phone')}
@@ -237,7 +237,7 @@ export function StudentRegisterView() {
             <Input
               id="sr-password"
               type="password"
-              className="mt-1.5 rounded-xl"
+              className="mt-1.5 rounded-xl bg-white/60"
               value={form.password}
               onChange={set('password')}
             />

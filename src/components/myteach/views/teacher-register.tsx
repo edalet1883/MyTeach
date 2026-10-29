@@ -149,7 +149,7 @@ export function TeacherRegisterView() {
 
       <div className="mt-6 space-y-5">
         {/* 1 — Şəxsi məlumatlar */}
-        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+        <section className="rounded-3xl border border-slate-200/60 bg-white/70 p-6 shadow-lg shadow-slate-900/5 backdrop-blur-xl sm:p-7">
           <div className="flex items-center gap-3">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-600 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-sm font-bold text-white">1</span>
             <div>
@@ -160,18 +160,18 @@ export function TeacherRegisterView() {
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
             <div>
               <Label htmlFor="tr-name">{t('auth.name')} *</Label>
-              <Input id="tr-name" className="mt-1.5" value={form.name} onChange={set('name')} />
+              <Input id="tr-name" className="mt-1.5 bg-white/60" value={form.name} onChange={set('name')} />
             </div>
             <div>
               <Label htmlFor="tr-surname">{t('auth.surname')} *</Label>
-              <Input id="tr-surname" className="mt-1.5" value={form.surname} onChange={set('surname')} />
+              <Input id="tr-surname" className="mt-1.5 bg-white/60" value={form.surname} onChange={set('surname')} />
             </div>
             <div>
               <Label htmlFor="tr-email">{t('auth.email')} *</Label>
               <Input
                 id="tr-email"
                 type="email"
-                className="mt-1.5"
+                className="mt-1.5 bg-white/60"
                 placeholder="example@gmail.com"
                 value={form.email}
                 onChange={set('email')}
@@ -181,7 +181,7 @@ export function TeacherRegisterView() {
               <Label htmlFor="tr-phone">{t('auth.phone')} *</Label>
               <Input
                 id="tr-phone"
-                className="mt-1.5"
+                className="mt-1.5 bg-white/60"
                 placeholder="+994 50 123 45 67"
                 value={form.phone}
                 onChange={set('phone')}
@@ -192,7 +192,7 @@ export function TeacherRegisterView() {
               <Input
                 id="tr-password"
                 type="password"
-                className="mt-1.5"
+                className="mt-1.5 bg-white/60"
                 value={form.password}
                 onChange={set('password')}
               />
@@ -246,7 +246,7 @@ export function TeacherRegisterView() {
         </section>
 
         {/* 2 — Peşəkar məlumatlar */}
-        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+        <section className="rounded-3xl border border-slate-200/60 bg-white/70 p-6 shadow-lg shadow-slate-900/5 backdrop-blur-xl sm:p-7">
           <div className="flex items-center gap-3">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-600 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-sm font-bold text-white">2</span>
             <div>
@@ -336,7 +336,7 @@ export function TeacherRegisterView() {
                 id="tr-exp"
                 type="number"
                 min="0"
-                className="mt-1.5"
+                className="mt-1.5 bg-white/60"
                 placeholder="5"
                 value={form.experienceYears}
                 onChange={set('experienceYears')}
@@ -349,7 +349,7 @@ export function TeacherRegisterView() {
                 id="tr-price"
                 type="number"
                 min="0"
-                className="mt-1.5"
+                className="mt-1.5 bg-white/60"
                 placeholder="20"
                 value={form.pricePerHour}
                 onChange={set('pricePerHour')}
@@ -379,7 +379,7 @@ export function TeacherRegisterView() {
               <Label htmlFor="tr-bio">{t('treg.bio')}</Label>
               <Textarea
                 id="tr-bio"
-                className="mt-1.5 min-h-24"
+                className="mt-1.5 min-h-24 bg-white/60"
                 placeholder={t('treg.bioPlaceholder')}
                 value={form.bio}
                 onChange={set('bio')}
@@ -389,7 +389,7 @@ export function TeacherRegisterView() {
         </section>
 
         {/* 3 — Dərs forması */}
-        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+        <section className="rounded-3xl border border-slate-200/60 bg-white/70 p-6 shadow-lg shadow-slate-900/5 backdrop-blur-xl sm:p-7">
           <div className="flex items-center gap-3">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-600 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-sm font-bold text-white">3</span>
             <div>
@@ -420,7 +420,7 @@ export function TeacherRegisterView() {
         </section>
 
         {/* 4 — Əlaqə üsulları */}
-        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-7">
+        <section className="rounded-3xl border border-slate-200/60 bg-white/70 p-6 shadow-lg shadow-slate-900/5 backdrop-blur-xl sm:p-7">
           <div className="flex items-center gap-3">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-600 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-sm font-bold text-white">4</span>
             <div>
