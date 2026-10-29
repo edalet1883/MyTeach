@@ -272,7 +272,7 @@ async function main() {
       pricePerHour: 24,
       status: 'WAITING_ADMIN',
       subjectId: subjects['İnformatika'],
-      sectorId: sectors['Məktəb'],
+      sectorId: sectors['11 illik'],
       purposeId: purposes['Məktəb proqramı'],
       cityId: cities['Bakı'],
       whatsapp: '+994551111009',

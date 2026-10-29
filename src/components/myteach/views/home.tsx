@@ -8,7 +8,7 @@ import { useApp } from '@/lib/store'
 import { useT, getCategoryName } from '@/lib/i18n'
 import { TeacherCard, TeacherCardData } from '@/components/myteach/teacher-card'
 import { SubjectIcon } from '@/components/myteach/subject-icon'
-import { MezunLogo } from '@/components/myteach/mezun-logo'
+import { MezunArt } from '@/components/myteach/mezun-art'
 import { api } from '@/lib/api'
 
 interface CategoriesResponse {
@@ -80,6 +80,16 @@ export function HomeView() {
         <div className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-white/10 blur-2xl" aria-hidden="true" />
         <div className="pointer-events-none absolute -bottom-32 right-0 h-96 w-96 rounded-full bg-teal-400/20 blur-3xl" aria-hidden="true" />
 
+        {/* Mezun qrafikası — küncdən arxa fon şəkli kimi (loqo yox) */}
+        <MezunArt
+          className="pointer-events-none absolute -right-14 -top-14 w-44 rotate-12 text-white/15 sm:-right-8 sm:top-4 sm:w-64 lg:right-6 lg:top-14 lg:w-80"
+          aria-hidden="true"
+        />
+        <MezunArt
+          className="pointer-events-none absolute -bottom-12 -left-10 w-32 -rotate-12 text-white/10 sm:w-44"
+          aria-hidden="true"
+        />
+
         {/* Axın kimi üzən fənn ikonları — yalnız geniş ekranda */}
         <div className="pointer-events-none absolute inset-0 hidden md:block" aria-hidden="true">
           {floatChips.map((chip, i) => (
@@ -96,13 +106,6 @@ export function HomeView() {
 
         <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:py-24">
           <div className="mx-auto max-w-3xl text-center">
-            {/* Hero logosu — mezun */}
-            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/25 bg-white/15 shadow-lg backdrop-blur">
-              <MezunLogo size={34} className="text-white" />
-            </div>
-            <div className="mb-5 inline-flex items-center rounded-full border border-white/25 bg-white/15 px-4 py-1.5 text-sm font-medium text-white backdrop-blur">
-              {t('hero.badge')}
-            </div>
             <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
               {t('hero.title1')}{' '}
               <span className="text-amber-300">{t('hero.title2')}</span>

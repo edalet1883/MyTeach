@@ -326,6 +326,9 @@ export const dict = {
   'auth.later': { az: 'Sonra', en: 'Later', ru: 'Позже' },
   'auth.phoneHint': { az: 'Məs: +994 50 123 45 67', en: 'E.g.: +994 50 123 45 67', ru: 'Напр.: +994 50 123 45 67' },
   'auth.googleHint': { az: 'Qeydiyyat üçün Gmail ünvanından istifadə et', en: 'Use a Gmail address to register', ru: 'Для регистрации используйте Gmail адрес' },
+  'auth.benefit1': { az: 'Təsdiqlənmiş müəllimlər — diplomu yoxlanılıb', en: 'Verified teachers — diplomas are checked', ru: 'Проверенные учителя — дипломы проверены' },
+  'auth.benefit2': { az: 'Birbaşa əlaqə — WhatsApp, telefon, e-poçt', en: 'Direct contact — WhatsApp, phone, email', ru: 'Прямая связь — WhatsApp, телефон, почта' },
+  'auth.benefit3': { az: 'Favorilər, rəylər və şəxsi kabinet', en: 'Favorites, reviews and personal cabinet', ru: 'Избранное, отзывы и личный кабинет' },
 
   // ── Müəllim qeydiyyatı ──
   'treg.title': { az: 'Müəllim qeydiyyatı', en: 'Teacher registration', ru: 'Регистрация учителя' },

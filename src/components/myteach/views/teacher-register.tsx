@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { useApp } from '@/lib/store'
 import { useT, getCategoryName, DictKey } from '@/lib/i18n'
-import { MezunLogo } from '@/components/myteach/mezun-logo'
+import { MezunArt } from '@/components/myteach/mezun-art'
 import { SubjectIcon } from '@/components/myteach/subject-icon'
 import { api } from '@/lib/api'
 import { toast } from '@/hooks/use-toast'
@@ -133,12 +133,9 @@ export function TeacherRegisterView() {
     <div className="mx-auto w-full max-w-2xl px-4 py-10 sm:px-6">
       {/* Başlıq kartı — yaşıl qradiyent */}
       <div className="relative overflow-hidden rounded-3xl bg-emerald-700 bg-[linear-gradient(135deg,#047857_0%,#059669_52%,#0d9488_100%)] px-6 py-9 text-center text-white sm:px-10">
-        <div className="pointer-events-none absolute -right-14 -top-14 h-44 w-44 rounded-full bg-white/10 blur-2xl" aria-hidden="true" />
-        <div className="pointer-events-none absolute -bottom-16 -left-10 h-40 w-40 rounded-full bg-teal-300/20 blur-2xl" aria-hidden="true" />
-        <div className="relative mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-white/25 bg-white/15 shadow-lg backdrop-blur">
-          <MezunLogo size={34} className="text-white" />
-        </div>
-        <h1 className="relative mt-4 text-2xl font-bold sm:text-3xl">{t('treg.title')}</h1>
+        <MezunArt className="pointer-events-none absolute -right-10 -top-12 w-32 rotate-12 text-white/20 sm:w-40" />
+        <MezunArt className="pointer-events-none absolute -bottom-10 -left-8 w-24 -rotate-12 text-white/10 sm:w-28" />
+        <h1 className="relative text-2xl font-bold sm:text-3xl">{t('treg.title')}</h1>
         <p className="relative mx-auto mt-2 max-w-lg text-sm text-emerald-50/90">{t('treg.subtitle')}</p>
         <div className="relative mt-4 inline-flex flex-wrap items-center justify-center gap-2 text-xs">
           <span className="inline-flex items-center rounded-full border border-white/25 bg-white/10 px-3 py-1">
