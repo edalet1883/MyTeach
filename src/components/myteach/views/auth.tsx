@@ -124,7 +124,10 @@ export function LoginDialog() {
                   {t('auth.noAccount')}{' '}
                   <button
                     className="font-semibold text-emerald-700 hover:underline"
-                    onClick={() => setAuthOpen(null) || navigate('student-register')}
+                    onClick={() => {
+                      setAuthOpen(null)
+                      navigate('student-register')
+                    }}
                   >
                     {t('auth.registerStudent')}
                   </button>
@@ -132,7 +135,10 @@ export function LoginDialog() {
                 <div>
                   <button
                     className="font-semibold text-emerald-700 hover:underline"
-                    onClick={() => setAuthOpen(null) || navigate('teacher-register')}
+                    onClick={() => {
+                      setAuthOpen(null)
+                      navigate('teacher-register')
+                    }}
                   >
                     {t('auth.registerTeacher')}
                   </button>

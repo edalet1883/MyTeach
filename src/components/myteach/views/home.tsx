@@ -9,6 +9,7 @@ import { useT, getCategoryName } from '@/lib/i18n'
 import { TeacherCard, TeacherCardData } from '@/components/myteach/teacher-card'
 import { SubjectIcon } from '@/components/myteach/subject-icon'
 import { MezunArt } from '@/components/myteach/mezun-art'
+import { MezunLogo } from '@/components/myteach/mezun-logo'
 import { api } from '@/lib/api'
 
 interface CategoriesResponse {
