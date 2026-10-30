@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { useApp } from '@/lib/store'
@@ -21,6 +21,7 @@ interface CatItem {
   nameAz: string
   nameEn: string
   nameRu: string
+  category?: string | null
 }
 
 interface CategoriesResponse {
@@ -29,6 +30,11 @@ interface CategoriesResponse {
   purposes: CatItem[]
   cities: CatItem[]
 }
+
+const SUBJECT_CATS = [
+  'school', 'lang', 'uni', 'it', 'design', 'music', 'sport', 'dance',
+  'art', 'biz', 'child', 'beauty', 'law', 'sci', 'build', 'other',
+] as const
 
 export function TeacherRegisterView() {
   const t = useT()
@@ -46,6 +52,8 @@ export function TeacherRegisterView() {
     email: '',
     phone: '',
     password: '',
+    age: '',
+    gender: '',
     experienceYears: '',
     pricePerHour: '',
     pricePeriod: 'HOUR',
@@ -61,6 +69,8 @@ export function TeacherRegisterView() {
     showPhone: false,
     showEmail: false,
     lessonFormats: 'BOTH',
+    groupLessons: false,
+    groupPrice: '',
   })
   const [diploma, setDiploma] = useState<File | null>(null)
 
@@ -210,6 +220,45 @@ export function TeacherRegisterView() {
                 onChange={set('password')}
               />
             </div>
+            <div>
+              <Label htmlFor="tr-age">
+                {t('auth.age')} <span className="text-xs font-normal text-slate-400">({t('auth.roleOptional')})</span>
+              </Label>
+              <Input
+                id="tr-age"
+                type="number"
+                min="18"
+                max="99"
+                className="mt-1.5 bg-white/60"
+                placeholder="30"
+                value={form.age}
+                onChange={set('age')}
+              />
+            </div>
+            <div>
+              <Label>
+                {t('auth.gender')} <span className="text-xs font-normal text-slate-400">({t('auth.roleOptional')})</span>
+              </Label>
+              <div className="mt-1.5 grid grid-cols-2 gap-1.5">
+                {([
+                  ['FEMALE', t('auth.genderF')],
+                  ['MALE', t('auth.genderM')],
+                ] as const).map(([value, label]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setForm((f) => ({ ...f, gender: f.gender === value ? '' : value }))}
+                    className={
+                      form.gender === value
+                        ? 'rounded-xl border-2 border-emerald-600 bg-emerald-50 px-2 py-2.5 text-xs font-bold text-emerald-700'
+                        : 'rounded-xl border border-slate-200 bg-white px-2 py-2.5 text-xs font-medium text-slate-500 transition-colors hover:border-emerald-300'
+                    }
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
             <div className="sm:col-span-2">
               <Label htmlFor="tr-diploma">{t('treg.diploma')}</Label>
               <input
@@ -278,14 +327,25 @@ export function TeacherRegisterView() {
                   <SelectValue placeholder={t('treg.selectPlaceholder')} />
                 </SelectTrigger>
                 <SelectContent className="max-h-60">
-                  {cats?.subjects.map((s) => (
-                    <SelectItem key={s.id} value={s.id}>
-                      <span className="flex items-center gap-2">
-                        <SubjectIcon name={s.nameAz} size={18} />
-                        {getCategoryName(s, lang)}
-                      </span>
-                    </SelectItem>
-                  ))}
+                  {SUBJECT_CATS.map((catKey) => {
+                    const groupItems = (cats?.subjects ?? []).filter((s) => (s.category ?? 'other') === catKey)
+                    if (groupItems.length === 0) return null
+                    return (
+                      <SelectGroup key={catKey}>
+                        <SelectLabel className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                          {t(`catgroup.${catKey}` as DictKey)}
+                        </SelectLabel>
+                        {groupItems.map((s) => (
+                          <SelectItem key={s.id} value={s.id}>
+                            <span className="flex items-center gap-2">
+                              <SubjectIcon name={s.nameAz} size={18} />
+                              {getCategoryName(s, lang)}
+                            </span>
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    )
+                  })}
                 </SelectContent>
               </Select>
             </div>
@@ -397,6 +457,36 @@ export function TeacherRegisterView() {
                 value={form.bio}
                 onChange={set('bio')}
               />
+            </div>
+            <div className="sm:col-span-2 rounded-2xl border border-sky-200 bg-sky-50/50 p-4">
+              <div className="flex items-start gap-3">
+                <Checkbox
+                  id="tr-group"
+                  checked={form.groupLessons}
+                  onCheckedChange={(c) => setForm((f) => ({ ...f, groupLessons: !!c }))}
+                />
+                <div className="flex-1">
+                  <Label htmlFor="tr-group" className="text-sm font-medium">
+                    {t('treg.groupLessons')}
+                  </Label>
+                  {form.groupLessons && (
+                    <div className="mt-2 max-w-48">
+                      <Label htmlFor="tr-group-price" className="text-xs text-slate-500">
+                        {t('treg.groupPrice')} (AZN)
+                      </Label>
+                      <Input
+                        id="tr-group-price"
+                        type="number"
+                        min="0"
+                        className="mt-1 bg-white/70"
+                        placeholder="15"
+                        value={form.groupPrice}
+                        onChange={set('groupPrice')}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </section>

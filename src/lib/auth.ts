@@ -72,6 +72,8 @@ export function publicUser(user: {
   email: string
   phone: string
   role: string
+  age?: number | null
+  gender?: string | null
   emailVerified: boolean
   blocked: boolean
   createdAt: Date
@@ -84,6 +86,8 @@ export function publicUser(user: {
     email: user.email,
     phone: user.phone,
     role: user.role,
+    age: user.age ?? null,
+    gender: user.gender ?? null,
     emailVerified: user.emailVerified,
     blocked: user.blocked,
     createdAt: user.createdAt,

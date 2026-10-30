@@ -4,11 +4,13 @@ import { hashPassword, setSessionCookie, publicUser } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
 
-// Şagird qeydiyyatı (sadə): Ad, Soyad, Gmail, Telefon, Şifrə
+// Şagird qeydiyyatı (sadə): Ad, Soyad, Gmail, Telefon, Şifrə (+ yaş, cins)
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
     const { name, surname, email, phone, password } = body
+    const age = body.age ? parseInt(String(body.age), 10) : null
+    const gender = body.gender === 'FEMALE' || body.gender === 'MALE' ? body.gender : null
 
     if (!name || !surname || !email || !phone || !password) {
       return NextResponse.json(
@@ -34,6 +36,8 @@ export async function POST(req: NextRequest) {
         phone: phone.trim(),
         password: hashPassword(password),
         role: 'STUDENT',
+        age: age && !isNaN(age) ? age : null,
+        gender,
         emailVerified: false,
         verifyToken,
       },

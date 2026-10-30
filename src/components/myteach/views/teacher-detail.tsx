@@ -40,6 +40,9 @@ interface TeacherDetail {
   purpose: { id: string; nameAz: string; nameEn: string; nameRu: string } | null
   city: { id: string; nameAz: string; nameEn: string; nameRu: string } | null
   lessonFormats: string
+  isVip?: boolean
+  groupLessons?: boolean
+  groupPrice?: number | null
   diplomaVerified: boolean
   avgRating: number
   reviewCount: number
@@ -213,6 +216,11 @@ export function TeacherDetailView() {
                   {t('ver.diplomaApproved')}
                 </span>
               )}
+              {teacher.isVip && (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300/50 bg-amber-400/25 px-3 py-1 text-xs font-bold text-amber-100 backdrop-blur">
+                  👑 VIP
+                </span>
+              )}
               <span className="text-xs text-emerald-100/80">{t('hero.badge')}</span>
             </div>
             <button
@@ -270,6 +278,11 @@ export function TeacherDetailView() {
               <div className="text-3xl font-extrabold text-emerald-700">
                 {teacher.pricePerHour} <span className="text-base font-medium text-slate-500">AZN{t(`price.${teacher.pricePeriod ?? 'HOUR'}` as DictKey)}</span>
               </div>
+              {teacher.groupLessons && teacher.groupPrice != null && (
+                <div className="mt-1 text-sm font-semibold text-sky-700">
+                  {t('tcard.groupPrice')} {teacher.groupPrice} AZN
+                </div>
+              )}
               <div className="mt-1 text-xs text-slate-400">{t('treg.priceHint')}</div>
             </div>
 

@@ -17,6 +17,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useApp, Lang } from '@/lib/store'
 import { useT, getCategoryName } from '@/lib/i18n'
+import { cn } from '@/lib/utils'
 import { StarRating } from '@/components/myteach/star-rating'
 import { api } from '@/lib/api'
 import { toast } from '@/hooks/use-toast'
@@ -60,6 +61,9 @@ interface AdminUser {
   blocked: boolean
   createdAt: string
   teacherStatus: string | null
+  teacherProfileId?: string | null
+  isVip?: boolean
+  vipRequested?: boolean
   subject: CatItem | null
   city: CatItem | null
 }
@@ -387,6 +391,17 @@ function UsersTab() {
     }
   }
 
+  const vipAct = async (teacherProfileId: string | null | undefined, action: 'grantVip' | 'revokeVip') => {
+    if (!teacherProfileId) return
+    try {
+      await api('/api/admin/teacher-action', { method: 'POST', body: JSON.stringify({ teacherId: teacherProfileId, action }) })
+      await load()
+      toast({ title: action === 'grantVip' ? t('adm.vipGranted') : t('adm.vipRevoked') })
+    } catch (e) {
+      toast({ title: e instanceof Error ? e.message : t('common.error'), variant: 'destructive' })
+    }
+  }
+
   if (loading) return <div className="mt-6 text-sm text-slate-400">{t('common.loading')}</div>
 
   const filtered = users.filter(
@@ -450,6 +465,17 @@ function UsersTab() {
                     {u.teacherStatus && (
                       <div className="mt-1 text-xs text-slate-400">{t(`adm.${u.teacherStatus}` as never)}</div>
                     )}
+                    {u.role === 'TEACHER' && (u.isVip || u.vipRequested) && (
+                      <div className="mt-1">
+                        {u.isVip ? (
+                          <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">👑 VIP</Badge>
+                        ) : (
+                          <Badge className="bg-amber-50 text-amber-700 hover:bg-amber-50">
+                            {t('adm.vipRequested')}
+                          </Badge>
+                        )}
+                      </div>
+                    )}
                   </td>
                   <td className="px-4 py-3">
                     {u.blocked ? (
@@ -464,6 +490,32 @@ function UsersTab() {
                   <td className="px-4 py-3">
                     {u.role !== 'ADMIN' && (
                       <div className="flex items-center justify-end gap-1.5">
+                        {u.role === 'TEACHER' && u.teacherProfileId && (
+                          u.isVip ? (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-8 border-amber-300 px-2.5 text-xs text-amber-700 hover:bg-amber-50"
+                              onClick={() => vipAct(u.teacherProfileId, 'revokeVip')}
+                            >
+                              {t('adm.vipRevoke')}
+                            </Button>
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className={cn(
+                                'h-8 px-2.5 text-xs',
+                                u.vipRequested
+                                  ? 'border-amber-400 bg-amber-50 text-amber-800 hover:bg-amber-100'
+                                  : 'border-amber-200 px-2.5 text-amber-700 hover:bg-amber-50'
+                              )}
+                              onClick={() => vipAct(u.teacherProfileId, 'grantVip')}
+                            >
+                              {u.vipRequested ? t('adm.vipApprove') : t('adm.vipGrant')}
+                            </Button>
+                          )
+                        )}
                         {u.blocked ? (
                           <Button
                             size="sm"

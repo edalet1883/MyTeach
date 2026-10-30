@@ -148,7 +148,7 @@ function StudentRegisterDialog({ open }: { open: boolean }) {
   const t = useT()
   const { setAuthOpen, setUser, navigate } = useApp()
   const [stage, setStage] = useState<'role' | 'student'>('role')
-  const [form, setForm] = useState({ name: '', surname: '', email: '', phone: '', password: '' })
+  const [form, setForm] = useState({ name: '', surname: '', age: '', gender: '', email: '', phone: '', password: '' })
   const [loading, setLoading] = useState(false)
   const [verifyUrl, setVerifyUrl] = useState<string | null>(null)
 
@@ -238,8 +238,32 @@ function StudentRegisterDialog({ open }: { open: boolean }) {
             </Button>
           </div>
         ) : stage === 'role' ? (
-          /* Rol seçimi — müəllim yoxsa şagird */
+          /* Rol seçimi — müəllimini tap / müəllim yoxsa şagird */
           <div className="space-y-3 p-6 sm:p-7">
+            <button
+              type="button"
+              onClick={() => {
+                setAuthOpen(null)
+                navigate('teachers')
+              }}
+              className="group flex w-full items-center gap-4 rounded-2xl border-2 border-emerald-500 bg-emerald-50/70 p-4 text-left transition-all hover:-translate-y-0.5 hover:border-emerald-600 hover:shadow-md"
+            >
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-600 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-white shadow-md shadow-emerald-200 transition-transform group-hover:scale-110">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-semibold text-slate-900">{t('auth.roleBrowse')}</span>
+                <span className="mt-0.5 block text-xs leading-snug text-slate-500">{t('auth.roleBrowseDesc')}</span>
+              </span>
+              <span className="shrink-0 text-emerald-400 transition-colors group-hover:text-emerald-600" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </span>
+            </button>
             <button
               type="button"
               onClick={() => setStage('student')}
@@ -306,6 +330,47 @@ function StudentRegisterDialog({ open }: { open: boolean }) {
                   <Input id="sr-dialog-surname" className="mt-1.5 h-11 rounded-xl bg-white/60" value={form.surname} onChange={set('surname')} />
                 </div>
               </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="sr-dialog-age">
+                    {t('auth.age')} <span className="text-xs font-normal text-slate-400">({t('auth.roleOptional')})</span>
+                  </Label>
+                  <Input
+                    id="sr-dialog-age"
+                    type="number"
+                    min="5"
+                    max="99"
+                    className="mt-1.5 h-11 rounded-xl bg-white/60"
+                    placeholder="16"
+                    value={form.age}
+                    onChange={set('age')}
+                  />
+                </div>
+                <div>
+                  <Label>
+                    {t('auth.gender')} <span className="text-xs font-normal text-slate-400">({t('auth.roleOptional')})</span>
+                  </Label>
+                  <div className="mt-1.5 grid grid-cols-2 gap-1.5">
+                    {([
+                      ['FEMALE', t('auth.genderF')],
+                      ['MALE', t('auth.genderM')],
+                    ] as const).map(([value, label]) => (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() => setForm((f) => ({ ...f, gender: form.gender === value ? '' : value }))}
+                        className={
+                          form.gender === value
+                            ? 'rounded-xl border-2 border-emerald-600 bg-emerald-50 px-2 py-2.5 text-xs font-bold text-emerald-700'
+                            : 'rounded-xl border border-slate-200 bg-white px-2 py-2.5 text-xs font-medium text-slate-500 transition-colors hover:border-emerald-300'
+                        }
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
               <div>
                 <Label htmlFor="sr-dialog-email">{t('auth.email')}</Label>
                 <Input
@@ -366,7 +431,7 @@ export function StudentRegisterView() {
   const t = useT()
   const { navigate, setUser } = useApp()
   const [stage, setStage] = useState<'role' | 'student'>('role')
-  const [form, setForm] = useState({ name: '', surname: '', email: '', phone: '', password: '' })
+  const [form, setForm] = useState({ name: '', surname: '', age: '', gender: '', email: '', phone: '', password: '' })
   const [loading, setLoading] = useState(false)
   const [verifyUrl, setVerifyUrl] = useState<string | null>(null)
 
@@ -418,8 +483,29 @@ export function StudentRegisterView() {
       </div>
 
       {stage === 'role' ? (
-        /* Rol seçimi — müəllim yoxsa şagird */
+        /* Rol seçimi — müəllimini tap / müəllim yoxsa şagird */
         <div className="relative -mt-6 space-y-3 rounded-3xl border border-slate-200/60 bg-white/70 p-6 shadow-lg shadow-slate-900/5 backdrop-blur-xl sm:p-8">
+          <button
+            type="button"
+            onClick={() => navigate('teachers')}
+            className="group flex w-full items-center gap-4 rounded-2xl border-2 border-emerald-500 bg-emerald-50/70 p-4 text-left transition-all hover:-translate-y-0.5 hover:border-emerald-600 hover:shadow-md"
+          >
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-600 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-white shadow-md shadow-emerald-200 transition-transform group-hover:scale-110">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.3-4.3" />
+              </svg>
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block font-semibold text-slate-900">{t('auth.roleBrowse')}</span>
+              <span className="mt-0.5 block text-xs leading-snug text-slate-500">{t('auth.roleBrowseDesc')}</span>
+            </span>
+            <span className="shrink-0 text-emerald-400 transition-colors group-hover:text-emerald-600" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="m9 18 6-6-6-6" />
+              </svg>
+            </span>
+          </button>
           <button
             type="button"
             onClick={() => setStage('student')}
@@ -482,6 +568,47 @@ export function StudentRegisterView() {
             <div>
               <Label htmlFor="sr-surname">{t('auth.surname')}</Label>
               <Input id="sr-surname" className="mt-1.5 rounded-xl bg-white/60" value={form.surname} onChange={set('surname')} />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label htmlFor="sr-age">
+                {t('auth.age')} <span className="text-xs font-normal text-slate-400">({t('auth.roleOptional')})</span>
+              </Label>
+              <Input
+                id="sr-age"
+                type="number"
+                min="5"
+                max="99"
+                className="mt-1.5 rounded-xl bg-white/60"
+                placeholder="16"
+                value={form.age}
+                onChange={set('age')}
+              />
+            </div>
+            <div>
+              <Label>
+                {t('auth.gender')} <span className="text-xs font-normal text-slate-400">({t('auth.roleOptional')})</span>
+              </Label>
+              <div className="mt-1.5 grid grid-cols-2 gap-1.5">
+                {([
+                  ['FEMALE', t('auth.genderF')],
+                  ['MALE', t('auth.genderM')],
+                ] as const).map(([value, label]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setForm((f) => ({ ...f, gender: form.gender === value ? '' : value }))}
+                    className={
+                      form.gender === value
+                        ? 'rounded-xl border-2 border-emerald-600 bg-emerald-50 px-2 py-2.5 text-xs font-bold text-emerald-700'
+                        : 'rounded-xl border border-slate-200 bg-white px-2 py-2.5 text-xs font-medium text-slate-500 transition-colors hover:border-emerald-300'
+                    }
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
           <div>

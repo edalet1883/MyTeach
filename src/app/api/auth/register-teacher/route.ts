@@ -31,6 +31,13 @@ export async function POST(req: NextRequest) {
     const lessonFormats = ['ONLINE', 'IN_PERSON', 'BOTH'].includes(rawFormats) ? rawFormats : 'BOTH'
     const rawPeriod = String(form.get('pricePeriod') || 'HOUR')
     const pricePeriod = ['HOUR', 'DAY', 'MONTH', 'YEAR'].includes(rawPeriod) ? rawPeriod : 'HOUR'
+    const rawAge = String(form.get('age') || '').trim()
+    const age = rawAge ? parseInt(rawAge, 10) : null
+    const rawGender = String(form.get('gender') || '')
+    const gender = ['FEMALE', 'MALE'].includes(rawGender) ? rawGender : null
+    const groupLessons = String(form.get('groupLessons') || '') === 'true'
+    const rawGroupPrice = String(form.get('groupPrice') || '').trim()
+    const groupPrice = rawGroupPrice ? parseInt(rawGroupPrice, 10) : null
 
     if (!name || !surname || !email || !phone || !password) {
       return NextResponse.json({ error: 'Bütün sahələr mütləqdir' }, { status: 400 })
@@ -68,6 +75,8 @@ export async function POST(req: NextRequest) {
         name, surname, email, phone,
         password: hashPassword(password),
         role: 'TEACHER',
+        age: age && !isNaN(age) ? age : null,
+        gender,
         emailVerified: false,
         verifyToken,
         teacherProfile: {
@@ -84,6 +93,8 @@ export async function POST(req: NextRequest) {
             emailContact: emailContact || email,
             showWhatsapp, showPhone, showEmail,
             lessonFormats,
+            groupLessons,
+            groupPrice: groupLessons && groupPrice && !isNaN(groupPrice) ? groupPrice : null,
           },
         },
       },

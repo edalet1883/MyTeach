@@ -14,6 +14,7 @@ interface CatItem {
   nameAz: string
   nameEn: string
   nameRu: string
+  category?: string | null
 }
 
 interface CategoriesResponse {
@@ -33,6 +34,11 @@ const STEPS: { group: GroupKey; filterKey: FilterKey }[] = [
   { group: 'cities', filterKey: 'cityId' },
 ]
 
+const SUBJECT_CATS = [
+  'school', 'lang', 'uni', 'it', 'design', 'music', 'sport', 'dance',
+  'art', 'biz', 'child', 'beauty', 'law', 'sci', 'build', 'other',
+] as const
+
 export function CategoriesView() {
   const t = useT()
   const lang = useApp((s) => s.lang)
@@ -42,6 +48,7 @@ export function CategoriesView() {
   const [cats, setCats] = useState<CategoriesResponse | null>(null)
   const [step, setStep] = useState(0)
   const [sel, setSel] = useState<Partial<Record<FilterKey, string>>>({})
+  const [subjectCat, setSubjectCat] = useState<string>('all')
 
   useEffect(() => {
     api<CategoriesResponse>('/api/categories').then(setCats).catch(() => {})
@@ -80,6 +87,12 @@ export function CategoriesView() {
   })
 
   const current = STEPS[step]
+
+  // Fənn kateqoriya filtri — yalnız fənnlər addımında
+  const currentItems =
+    current.group === 'subjects' && subjectCat !== 'all'
+      ? cats?.[current.group].filter((c) => c.category === subjectCat) ?? []
+      : cats?.[current.group] ?? []
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6">
@@ -137,9 +150,40 @@ export function CategoriesView() {
         </div>
       ) : (
         <>
+          {/* Fənn kateqoriya çipləri — fənnlər addımında */}
+          {current.group === 'subjects' && (
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-1.5">
+              <button
+                onClick={() => setSubjectCat('all')}
+                className={cn(
+                  'rounded-full border px-3 py-1.5 text-xs font-medium transition-colors',
+                  subjectCat === 'all'
+                    ? 'border-emerald-600 bg-emerald-600 text-white'
+                    : 'border-slate-200 bg-white text-slate-500 hover:border-emerald-300'
+                )}
+              >
+                {t('catgroup.all')}
+              </button>
+              {SUBJECT_CATS.map((c) => (
+                <button
+                  key={c}
+                  onClick={() => setSubjectCat(c)}
+                  className={cn(
+                    'rounded-full border px-3 py-1.5 text-xs font-medium transition-colors',
+                    subjectCat === c
+                      ? 'border-emerald-600 bg-emerald-600 text-white'
+                      : 'border-slate-200 bg-white text-slate-500 hover:border-emerald-300'
+                  )}
+                >
+                  {t(`catgroup.${c}` as never)}
+                </button>
+              ))}
+            </div>
+          )}
+
           {/* Cari addımın seçimləri */}
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-            {cats[current.group].map((c) => {
+            {currentItems.map((c) => {
               const active = sel[current.filterKey] === c.id
               return (
                 <button
@@ -191,7 +235,7 @@ export function CategoriesView() {
                 </button>
               )
             })}
-            {cats[current.group].length === 0 && (
+            {currentItems.length === 0 && (
               <div className="col-span-full rounded-2xl border border-dashed border-slate-300 p-10 text-center text-sm text-slate-400">
                 —
               </div>

@@ -24,6 +24,8 @@ export interface AppUser {
   email: string
   phone: string
   role: 'STUDENT' | 'TEACHER' | 'ADMIN'
+  age?: number | null
+  gender?: 'FEMALE' | 'MALE' | null
   emailVerified: boolean
   teacherStatus: 'PENDING' | 'WAITING_ADMIN' | 'APPROVED' | 'REJECTED' | null
 }
@@ -38,6 +40,8 @@ export interface Filters {
   minPrice: string
   maxPrice: string
   lessonFormat: '' | 'ONLINE' | 'IN_PERSON'
+  gender: '' | 'FEMALE' | 'MALE'
+  groupOnly: boolean
 }
 
 interface AppState {
@@ -69,6 +73,8 @@ const defaultFilters: Filters = {
   minPrice: '',
   maxPrice: '',
   lessonFormat: '',
+  gender: '',
+  groupOnly: false,
 }
 
 export const useApp = create<AppState>((set) => ({

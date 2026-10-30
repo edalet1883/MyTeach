@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -67,6 +68,8 @@ export function TeachersView() {
     if (filters.minPrice) params.set('minPrice', filters.minPrice)
     if (filters.maxPrice) params.set('maxPrice', filters.maxPrice)
     if (filters.lessonFormat) params.set('lessonFormat', filters.lessonFormat)
+    if (filters.gender) params.set('gender', filters.gender)
+    if (filters.groupOnly) params.set('group', '1')
     params.set('sort', filters.sort)
     try {
       const d = await api<{ teachers: TeacherCardData[] }>(`/api/teachers?${params.toString()}`)
@@ -191,6 +194,34 @@ export function TeachersView() {
             <SelectItem value="IN_PERSON">{t('fmt.inPerson')}</SelectItem>
           </SelectContent>
         </Select>
+      </div>
+
+      <div>
+        <Label className="text-xs font-medium text-slate-500">{t('teachers.gender')}</Label>
+        <Select
+          value={filters.gender || 'any'}
+          onValueChange={(v) => setFilters({ gender: v === 'any' ? '' : (v as 'FEMALE' | 'MALE') })}
+        >
+          <SelectTrigger className="mt-1.5">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="any">{t('common.all')}</SelectItem>
+            <SelectItem value="FEMALE">{t('auth.genderF')}</SelectItem>
+            <SelectItem value="MALE">{t('auth.genderM')}</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="flex items-center gap-2.5 rounded-xl border border-sky-200 bg-sky-50/60 px-3.5 py-3">
+        <Checkbox
+          id="flt-group"
+          checked={filters.groupOnly}
+          onCheckedChange={(c) => setFilters({ groupOnly: !!c })}
+        />
+        <Label htmlFor="flt-group" className="cursor-pointer text-sm font-medium text-slate-700">
+          {t('teachers.groupOnly')}
+        </Label>
       </div>
 
       <div className="grid grid-cols-2 gap-2">

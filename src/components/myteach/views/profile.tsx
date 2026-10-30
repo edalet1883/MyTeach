@@ -75,6 +75,8 @@ interface MyTeacherProfile {
   showWhatsapp: boolean
   showPhone: boolean
   showEmail: boolean
+  isVip?: boolean
+  vipRequested?: boolean
   avgRating: number
   reviewCount: number
   diplomaUrl: string | null
@@ -432,6 +434,11 @@ function TeacherCabinet() {
         )}
       </div>
 
+      {/* 👑 VIP paketləri — təsdiqlənmiş müəllim üçün */}
+      {profile && profile.status === 'APPROVED' && (
+        <VipSection isVip={!!profile.isVip} vipRequested={!!profile.vipRequested} onRequested={load} />
+      )}
+
       {/* Statistikalar */}
       {profile && (
         <div className="grid gap-4 sm:grid-cols-3">
@@ -708,6 +715,118 @@ function EmptyState({
       <p className="font-medium text-slate-700">{title}</p>
       <p className="mt-1 text-sm text-slate-500">{desc}</p>
       {action && <div className="mt-5">{action}</div>}
+    </div>
+  )
+}
+
+// ── 👑 VIP paketləri — müəllim anketini VIP etmək üçün müraciət ──
+function VipSection({
+  isVip,
+  vipRequested,
+  onRequested,
+}: {
+  isVip: boolean
+  vipRequested: boolean
+  onRequested: () => void
+}) {
+  const t = useT()
+  const [plan, setPlan] = useState<'MONTH' | 'QUARTER' | 'YEAR'>('QUARTER')
+  const [sending, setSending] = useState(false)
+
+  const plans: { key: 'MONTH' | 'QUARTER' | 'YEAR'; months: number; price: number; labelKey: DictKey; popular?: boolean }[] = [
+    { key: 'MONTH', months: 1, price: 15, labelKey: 'vip.planMonth' },
+    { key: 'QUARTER', months: 3, price: 40, labelKey: 'vip.planQuarter', popular: true },
+    { key: 'YEAR', months: 12, price: 120, labelKey: 'vip.planYear' },
+  ]
+
+  const request = async () => {
+    setSending(true)
+    try {
+      await api('/api/vip/request', { method: 'POST', body: JSON.stringify({ plan }) })
+      toast({ title: t('vip.requestSent') })
+      onRequested()
+    } catch (e) {
+      toast({ title: e instanceof Error ? e.message : t('common.error'), variant: 'destructive' })
+    } finally {
+      setSending(false)
+    }
+  }
+
+  if (isVip) {
+    return (
+      <div className="rounded-3xl border-2 border-amber-300 bg-[linear-gradient(135deg,#fffbeb_0%,#fef3c7_100%)] p-6 sm:p-8">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-bold text-amber-900">{t('vip.active')}</h2>
+            <p className="mt-1 text-sm text-amber-800/80">{t('vip.desc')}</p>
+          </div>
+          <span className="rounded-full bg-amber-400 px-4 py-1.5 text-sm font-bold text-amber-950 shadow-md shadow-amber-200">
+            👑 VIP
+          </span>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8">
+      <h2 className="text-lg font-bold text-slate-900">{t('vip.title')}</h2>
+      <p className="mt-1 max-w-2xl text-sm leading-relaxed text-slate-500">{t('vip.desc')}</p>
+
+      {vipRequested ? (
+        <div className="mt-5 rounded-2xl border border-amber-300 bg-amber-50 px-5 py-4 text-sm font-medium text-amber-800">
+          ⏳ {t('vip.pending')}
+        </div>
+      ) : (
+        <>
+          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+            {plans.map((p) => {
+              const active = plan === p.key
+              return (
+                <button
+                  key={p.key}
+                  type="button"
+                  onClick={() => setPlan(p.key)}
+                  className={
+                    active
+                      ? 'relative rounded-2xl border-2 border-amber-500 bg-amber-50 p-5 text-left shadow-md shadow-amber-100'
+                      : 'relative rounded-2xl border border-slate-200 bg-white p-5 text-left transition-colors hover:border-amber-300'
+                  }
+                >
+                  {p.popular && (
+                    <span className="absolute -top-2.5 right-4 rounded-full bg-amber-500 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+                      {t('vip.popular')}
+                    </span>
+                  )}
+                  <div className="text-sm font-semibold text-slate-900">{t(p.labelKey)}</div>
+                  <div className="mt-2">
+                    <span className="text-2xl font-extrabold text-slate-900">{p.price} AZN</span>
+                    <span className="ml-1 text-xs text-slate-400">
+                      ({Math.round(p.price / p.months)} AZN{t('vip.perMonth')})
+                    </span>
+                  </div>
+                  {active && (
+                    <span className="mt-3 inline-flex items-center gap-1 text-xs font-bold text-amber-700">
+                      <span className="css-check" aria-hidden="true" /> {t('vip.selected')}
+                    </span>
+                  )}
+                </button>
+              )
+            })}
+          </div>
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <Button
+              size="lg"
+              className="rounded-xl bg-amber-500 bg-[linear-gradient(135deg,#f59e0b_0%,#d97706_100%)] font-semibold text-white shadow-md shadow-amber-200 hover:bg-amber-600"
+              disabled={sending}
+              onClick={request}
+            >
+              {sending ? '...' : `👑 ${t('vip.request')}`}
+            </Button>
+            <p className="text-xs text-slate-400">{t('vip.note')}</p>
+          </div>
+        </>
+      )}
     </div>
   )
 }

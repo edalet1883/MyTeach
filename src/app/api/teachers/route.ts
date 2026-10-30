@@ -16,6 +16,8 @@ export async function GET(req: NextRequest) {
     const maxPrice = sp.get('maxPrice') ? parseInt(sp.get('maxPrice')!, 10) : undefined
     const sort = sp.get('sort') || 'rating' // rating | priceAsc | priceDesc | experience
     const lessonFormat = sp.get('lessonFormat') // '' | ONLINE | IN_PERSON
+    const gender = sp.get('gender') // '' | FEMALE | MALE
+    const groupOnly = sp.get('group') === '1'
 
     const where: Record<string, unknown> = {
       status: 'APPROVED',
@@ -33,6 +35,12 @@ export async function GET(req: NextRequest) {
     }
     if (lessonFormat === 'ONLINE' || lessonFormat === 'IN_PERSON') {
       where.lessonFormats = { in: [lessonFormat, 'BOTH'] }
+    }
+    if (groupOnly) {
+      where.groupLessons = true
+    }
+    if (gender === 'FEMALE' || gender === 'MALE') {
+      where.user = { ...(where.user as object), gender }
     }
     if (search) {
       where.OR = [
@@ -74,6 +82,9 @@ export async function GET(req: NextRequest) {
         purpose: t.purpose,
         city: t.city,
         lessonFormats: t.lessonFormats,
+        groupLessons: t.groupLessons,
+        groupPrice: t.groupPrice,
+        isVip: t.isVip,
         verified: t.status === 'APPROVED',
         hasDiploma: !!t.diplomaUrl,
         avgRating: Math.round(avg * 10) / 10,
@@ -95,6 +106,8 @@ export async function GET(req: NextRequest) {
       default:
         mapped.sort((a, b) => b.avgRating - a.avgRating || b.reviewCount - a.reviewCount)
     }
+    // 👑 VIP anketlər həmişə ən yuxarıda — stabil sort seçilmiş sıralamanı qoruyur
+    mapped.sort((a, b) => Number(b.isVip ?? false) - Number(a.isVip ?? false))
 
     return NextResponse.json({ teachers: mapped })
   } catch (e) {

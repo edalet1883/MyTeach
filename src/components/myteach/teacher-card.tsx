@@ -25,6 +25,9 @@ export interface TeacherCardData {
   lessonFormats?: string
   pricePeriod?: string
   verified?: boolean
+  isVip?: boolean
+  groupLessons?: boolean
+  groupPrice?: number | null
   avgRating: number
   reviewCount: number
   emailVerified?: boolean
@@ -73,7 +76,12 @@ export function TeacherCard({
 
   return (
     <div
-      className="group cursor-pointer rounded-2xl border border-slate-200 bg-white p-5 transition-all duration-300 hover:-translate-y-1 hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-100/60"
+      className={cn(
+        'group cursor-pointer rounded-2xl border bg-white p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg',
+        teacher.isVip
+          ? 'border-amber-300 hover:border-amber-400 hover:shadow-amber-100'
+          : 'border-slate-200 hover:border-emerald-300 hover:shadow-emerald-100/60'
+      )}
       onClick={() => navigate('teacher-detail', { teacherId: teacher.id })}
       role="button"
       tabIndex={0}
@@ -92,6 +100,14 @@ export function TeacherCard({
           </div>
           <div>
             <div className="flex items-center gap-1.5 font-semibold text-slate-900">
+              {teacher.isVip && (
+                <span
+                  className="inline-flex shrink-0 items-center gap-0.5 rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-bold text-amber-800"
+                  title={t('tcard.vip')}
+                >
+                  👑 VIP
+                </span>
+              )}
               <span className="line-clamp-1">
                 {teacher.name} {teacher.surname}
               </span>
@@ -142,6 +158,11 @@ export function TeacherCard({
                 : t('fmt.both')}
           </Badge>
         )}
+        {teacher.groupLessons && (
+          <Badge className="border border-sky-200 bg-sky-50 text-sky-700 hover:bg-sky-50">
+            {t('tcard.group')}
+          </Badge>
+        )}
         {teacher.sector && (
           <Badge variant="secondary" className="bg-slate-100 text-slate-600">
             {getCategoryName(teacher.sector, lang as Lang)}
@@ -161,6 +182,11 @@ export function TeacherCard({
         <div className="text-right">
           <span className="text-xl font-bold text-emerald-700">{teacher.pricePerHour}</span>
           <span className="ml-0.5 text-sm text-slate-500">AZN{t(`price.${teacher.pricePeriod ?? 'HOUR'}` as DictKey)}</span>
+          {teacher.groupLessons && teacher.groupPrice != null && (
+            <div className="text-xs text-slate-500">
+              {t('tcard.groupPrice')} <span className="font-semibold text-sky-700">{teacher.groupPrice} AZN</span>
+            </div>
+          )}
         </div>
       </div>
 

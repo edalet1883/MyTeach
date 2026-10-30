@@ -19,6 +19,9 @@ model User {
   phone        String
   password     String
   role         String   @default("STUDENT") // STUDENT | TEACHER | ADMIN
+  age          Int?
+  // Cins: FEMALE | MALE (yalnız məlumat üçün, filtrlərdə işlənir)
+  gender       String?
   emailVerified Boolean @default(false)
   verifyToken  String?
   blocked      Boolean  @default(false)
@@ -61,6 +64,15 @@ model TeacherProfile {
   // Dərs forması: ONLINE | IN_PERSON | BOTH
   lessonFormats String @default("BOTH")
 
+  // Qrup dərsləri
+  groupLessons Boolean @default(false)
+  groupPrice   Int?
+
+  // 👑 VIP — admin təsdiqilən premium anket
+  isVip        Boolean @default(false)
+  vipRequested Boolean @default(false)
+  vipPlan      String? // MONTH | QUARTER | YEAR
+
   reviews   Review[]
   favorites Favorite[]
   reports   Report[]
@@ -73,6 +85,8 @@ model Subject {
   nameAz String
   nameEn String
   nameRu String
+  // Kateqoriya açarı: school | lang | uni | it | design | music | sport | dance | art | biz | child | beauty | law | sci | build | other
+  category String?
 
   teachers TeacherProfile[]
 }

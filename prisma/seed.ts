@@ -1,6 +1,7 @@
 /* MyTeach — başlanğıc məlumatları */
 import { PrismaClient } from '@prisma/client'
 import crypto from 'crypto'
+import { subjectsData, citiesData } from './data'
 
 const db = new PrismaClient()
 const SECRET = 'myteach-dev-secret-key-2026'
@@ -10,21 +11,7 @@ async function main() {
   console.log('Seeding...')
 
   // ── Kateqoriyalar ──
-  const subjectsData = [
-    { nameAz: 'İngilis dili', nameEn: 'English', nameRu: 'Английский язык' },
-    { nameAz: 'Riyaziyyat', nameEn: 'Mathematics', nameRu: 'Математика' },
-    { nameAz: 'Azərbaycan dili', nameEn: 'Azerbaijani language', nameRu: 'Азербайджанский язык' },
-    { nameAz: 'Fizika', nameEn: 'Physics', nameRu: 'Физика' },
-    { nameAz: 'Kimya', nameEn: 'Chemistry', nameRu: 'Химия' },
-    { nameAz: 'Biologiya', nameEn: 'Biology', nameRu: 'Биология' },
-    { nameAz: 'Tarix', nameEn: 'History', nameRu: 'История' },
-    { nameAz: 'Coğrafiya', nameEn: 'Geography', nameRu: 'География' },
-    { nameAz: 'Rus dili', nameEn: 'Russian language', nameRu: 'Русский язык' },
-    { nameAz: 'İnformatika', nameEn: 'Computer science', nameRu: 'Информатика' },
-    { nameAz: 'Alman dili', nameEn: 'German', nameRu: 'Немецкий язык' },
-    { nameAz: 'Türk dili', nameEn: 'Turkish', nameRu: 'Турецкий язык' },
-    { nameAz: 'Fransız dili', nameEn: 'French', nameRu: 'Французский язык' },
-  ]
+  // subjectsData və citiesData prisma/data.ts-dən (tutor.az əsaslı tam siyahı) — syncGroup artıq category sahəsini də sinxron edir
   const sectorsData = [
     { nameAz: 'Uşaq bağçası', nameEn: 'Preschool', nameRu: 'Детский сад' },
     { nameAz: 'İbtidai', nameEn: 'Primary school', nameRu: 'Начальная школа' },
@@ -42,38 +29,31 @@ async function main() {
     { nameAz: 'Beynəlxalq imtahanlar', nameEn: 'International exams', nameRu: 'Международные экзамены' },
     { nameAz: 'Dövlət qulluğu imtahanı', nameEn: 'Civil service exam', nameRu: 'Госслужба экзамен' },
   ]
-  const citiesData = [
-    { nameAz: 'Bakı', nameEn: 'Baku', nameRu: 'Баку' },
-    { nameAz: 'Gəncə', nameEn: 'Ganja', nameRu: 'Гянджа' },
-    { nameAz: 'Sumqayıt', nameEn: 'Sumgait', nameRu: 'Сумгаит' },
-    { nameAz: 'Mingəçevir', nameEn: 'Mingachevir', nameRu: 'Мингечевир' },
-    { nameAz: 'Şəki', nameEn: 'Sheki', nameRu: 'Шеки' },
-    { nameAz: 'Lənkəran', nameEn: 'Lankaran', nameRu: 'Ленкорань' },
-    { nameAz: 'Naxçıvan', nameEn: 'Nakhchivan', nameRu: 'Нахчыван' },
-  ]
+  // citiesData prisma/data.ts-dən import olunur (tutor.az əsaslı 25 şəhər)
 
   // ── Kateqoriyaların sinxronizasiyası — HƏR deployda işə düşür (demo müəllim olsa belə) ──
   // Baza köhnə/yarımçıq adlarla qalsa belə, kanonik 3 dilli siyahıya gətirilir.
   async function syncGroup(
     table: 'subject' | 'sector' | 'purpose' | 'city',
-    list: { nameAz: string; nameEn: string; nameRu: string }[],
+    list: { nameAz: string; nameEn: string; nameRu: string; category?: string }[],
   ): Promise<Record<string, string>> {
     const model = db[table] as unknown as {
-      findFirst(args: { where: { nameAz: string } }): Promise<{ id: string; nameEn: string; nameRu: string } | null>
-      create(args: { data: { nameAz: string; nameEn: string; nameRu: string } }): Promise<{ id: string }>
-      update(args: { where: { id: string }; data: { nameEn: string; nameRu: string } }): Promise<unknown>
+      findFirst(args: { where: { nameAz: string } }): Promise<{ id: string; nameEn: string; nameRu: string; category?: string | null } | null>
+      create(args: { data: Record<string, unknown> }): Promise<{ id: string }>
+      update(args: { where: { id: string }; data: Record<string, unknown> }): Promise<unknown>
       deleteMany(args: { where: { nameAz: { notIn: string[] } } }): Promise<unknown>
     }
     const ids: Record<string, string> = {}
     for (const item of list) {
+      const extra = table === 'subject' ? { category: item.category ?? 'other' } : {}
       const found = await model.findFirst({ where: { nameAz: item.nameAz } })
       if (found) {
-        if (found.nameEn !== item.nameEn || found.nameRu !== item.nameRu) {
-          await model.update({ where: { id: found.id }, data: { nameEn: item.nameEn, nameRu: item.nameRu } })
+        if (found.nameEn !== item.nameEn || found.nameRu !== item.nameRu || (table === 'subject' && found.category !== (item.category ?? 'other'))) {
+          await model.update({ where: { id: found.id }, data: { nameEn: item.nameEn, nameRu: item.nameRu, ...extra } })
         }
         ids[item.nameAz] = found.id
       } else {
-        const c = await model.create({ data: item })
+        const c = await model.create({ data: { ...item, ...extra } })
         ids[item.nameAz] = c.id
       }
     }
@@ -138,14 +118,14 @@ async function main() {
 
   // ── Demo şagirdlər ──
   const studentsData = [
-    { name: 'Aysel', surname: 'Məmmədova', email: 'aysel@demo.az', phone: '+994501110011' },
-    { name: 'Rəşad', surname: 'Əliyev', email: 'reshad@demo.az', phone: '+994501110022' },
-    { name: 'Nurlan', surname: 'Həsənli', email: 'nurlan@demo.az', phone: '+994501110033' },
-    { name: 'Leyla', surname: 'Quliyeva', email: 'leyla@demo.az', phone: '+994501110044' },
-    { name: 'Ülvi', surname: 'Kərimov', email: 'ulvi@demo.az', phone: '+994501110055' },
-    { name: 'Zəhra', surname: 'Verdiyeva', email: 'zahra@demo.az', phone: '+994501110066' },
-    { name: 'Murad', surname: 'Səmədov', email: 'murad@demo.az', phone: '+994501110077' },
-    { name: 'Ayxan', surname: 'Tağızadə', email: 'ayxan@demo.az', phone: '+994501110088' },
+    { name: 'Aysel', surname: 'Məmmədova', email: 'aysel@demo.az', phone: '+994501110011', gender: 'FEMALE', age: 16 },
+    { name: 'Rəşad', surname: 'Əliyev', email: 'reshad@demo.az', phone: '+994501110022', gender: 'MALE', age: 17 },
+    { name: 'Nurlan', surname: 'Həsənli', email: 'nurlan@demo.az', phone: '+994501110033', gender: 'MALE', age: 19 },
+    { name: 'Leyla', surname: 'Quliyeva', email: 'leyla@demo.az', phone: '+994501110044', gender: 'FEMALE', age: 15 },
+    { name: 'Ülvi', surname: 'Kərimov', email: 'ulvi@demo.az', phone: '+994501110055', gender: 'MALE', age: 23 },
+    { name: 'Zəhra', surname: 'Verdiyeva', email: 'zahra@demo.az', phone: '+994501110066', gender: 'FEMALE', age: 14 },
+    { name: 'Murad', surname: 'Səmədov', email: 'murad@demo.az', phone: '+994501110077', gender: 'MALE', age: 18 },
+    { name: 'Ayxan', surname: 'Tağızadə', email: 'ayxan@demo.az', phone: '+994501110088', gender: 'MALE', age: 20 },
   ]
   const studentIds: string[] = []
   for (const s of studentsData) {
@@ -158,8 +138,9 @@ async function main() {
   // ── Demo müəllimlər (təsdiqlənmiş) ──
   const teachersData = [
     {
-      name: 'Fidan', surname: 'Abdullayeva', email: 'fidan@demo.az', phone: '+994551111001',
+      name: 'Fidan', surname: 'Abdullayeva', email: 'fidan@demo.az', phone: '+994551111001', gender: 'FEMALE', age: 32,
       experienceYears: 8, pricePerHour: 25, pricePeriod: 'HOUR', subject: 'İngilis dili', sector: 'Universitet', purpose: 'Beynəlxalq imtahanlar', city: 'Bakı',
+      isVip: true, groupLessons: true, groupPrice: 15,
       bio: 'IELTS 8.5 balına malik təcrübəli ingilis dili müəllimiyəm. 8 ildir beynəlxalq imtahanlara hazırlaşıram. Dərslərim interaktiv metodika ilə keçirilir — qrammatika, danışıq və yazı bacarıqları ayrı-ayrı işlənir.',
       showWhatsapp: true, showPhone: true, showEmail: true,
       lessonFormats: 'BOTH',
@@ -167,7 +148,7 @@ async function main() {
       reviews: [5, 5, 4, 5, 5],
     },
     {
-      name: 'Elvin', surname: 'Rəhimov', email: 'elvin@demo.az', phone: '+994551111002',
+      name: 'Elvin', surname: 'Rəhimov', email: 'elvin@demo.az', phone: '+994551111002', gender: 'MALE', age: 41,
       experienceYears: 12, pricePerHour: 30, pricePeriod: 'HOUR', subject: 'Riyaziyyat', sector: '11 illik', purpose: 'Buraxılış imtahanı', city: 'Bakı',
       bio: '12 illik təcrübəyə malik riyaziyyat müəllimiyəm. Buraxılış və qəbul imtahanlarına hazırlıq üzrə yüzlərlə uğur hekayəsi. Mürəkkəb mövzuları sadə dillə izah etmək mənim istiqamətimdir.',
       showWhatsapp: true, showPhone: true, showEmail: false,
@@ -176,7 +157,7 @@ async function main() {
       reviews: [5, 4, 5, 5],
     },
     {
-      name: 'Günel', surname: 'İsmayılova', email: 'gunel@demo.az', phone: '+994551111003',
+      name: 'Günel', surname: 'İsmayılova', email: 'gunel@demo.az', phone: '+994551111003', gender: 'FEMALE', age: 29,
       experienceYears: 6, pricePerHour: 20, pricePeriod: 'HOUR', subject: 'Azərbaycan dili', sector: '9 illik', purpose: 'Buraxılış imtahanı', city: 'Sumqayıt',
       bio: 'Azərbaycan dili və ədəbiyyat müəllimiyəm. Buraxılış imtahanına hazırlıqda konkret nəticəyə yönəlmiş proqramla işləyirəm. Hər dərsdə sınaq yazıları və təhlil aparılır.',
       showWhatsapp: true, showPhone: false, showEmail: true,
@@ -185,7 +166,7 @@ async function main() {
       reviews: [5, 5, 5],
     },
     {
-      name: 'Kamran', surname: 'Cəfərov', email: 'kamran@demo.az', phone: '+994551111004',
+      name: 'Kamran', surname: 'Cəfərov', email: 'kamran@demo.az', phone: '+994551111004', gender: 'MALE', age: 45,
       experienceYears: 10, pricePerHour: 500, pricePeriod: 'MONTH', subject: 'Fizika', sector: 'Universitet', purpose: 'Magistratura hazırlığı', city: 'Gəncə',
       bio: 'Fizika üzrə fəlsəfə doktoru. Magistratura hazırlığı və universitet kursları üzrə dərslər keçirirəm. Problem həll etmə metodikası ilə tələbələrimin 90%-i müvəffəqiyyət qazanıb.',
       showWhatsapp: false, showPhone: true, showEmail: true,
@@ -193,8 +174,9 @@ async function main() {
       reviews: [4, 5, 4],
     },
     {
-      name: 'Səbinə', surname: 'Hüseynova', email: 'sabina@demo.az', phone: '+994551111005',
+      name: 'Səbinə', surname: 'Hüseynova', email: 'sabina@demo.az', phone: '+994551111005', gender: 'FEMALE', age: 26,
       experienceYears: 5, pricePerHour: 22, pricePeriod: 'HOUR', subject: 'İngilis dili', sector: '9 illik', purpose: 'Danışıq dili', city: 'Bakı',
+      groupLessons: true, groupPrice: 12,
       bio: 'Danışıq dili üzrə intensiv dərslər. Nerələrin qorxusunu aradan qaldırıram — hər dərs real ssenarilər üzərində qurulur. Uşaqlar və yeniyetmələr üçün xüsusi proqramlarım var.',
       showWhatsapp: true, showPhone: true, showEmail: false,
       lessonFormats: 'ONLINE',
@@ -202,8 +184,9 @@ async function main() {
       reviews: [5, 4],
     },
     {
-      name: 'Orxan', surname: 'Mikayılov', email: 'orxan@demo.az', phone: '+994551111006',
+      name: 'Orxan', surname: 'Mikayılov', email: 'orxan@demo.az', phone: '+994551111006', gender: 'MALE', age: 38,
       experienceYears: 15, pricePerHour: 35, pricePeriod: 'HOUR', subject: 'Kimya', sector: '11 illik', purpose: 'Buraxılış imtahanı', city: 'Bakı',
+      isVip: true,
       bio: '15 illik təcrübə, kimya üzrə metodikaçı. Təcrübəli eksperimentlərlə mövzuları vizuallaşdırıram. Buraxılış imtahanının bütün bölmələri üzrə systematik hazırlıq proqramım mövcuddur.',
       showWhatsapp: true, showPhone: false, showEmail: true,
       lessonFormats: 'IN_PERSON',
@@ -211,7 +194,7 @@ async function main() {
       reviews: [5, 5, 5, 4, 5],
     },
     {
-      name: 'Nərmin', surname: 'Səfərova', email: 'nermin@demo.az', phone: '+994551111007',
+      name: 'Nərmin', surname: 'Səfərova', email: 'nermin@demo.az', phone: '+994551111007', gender: 'FEMALE', age: 31,
       experienceYears: 7, pricePerHour: 18, pricePeriod: 'HOUR', subject: 'Rus dili', sector: 'İbtidai', purpose: 'Məktəb proqramı', city: 'Sumqayıt',
       bio: 'Rus dili müəllimiyəm. Məktəb proqramı ilə paralel olaraq danışıq və qrammatika bacarıqlarını inkişaf etdirirəm. Ev tapşırıqlarına sistemli yanaşma.',
       showWhatsapp: true, showPhone: true, showEmail: false,
@@ -220,7 +203,7 @@ async function main() {
       reviews: [4, 4, 5],
     },
     {
-      name: 'Tural', surname: 'Bəkirov', email: 'tural@demo.az', phone: '+994551111008',
+      name: 'Tural', surname: 'Bəkirov', email: 'tural@demo.az', phone: '+994551111008', gender: 'MALE', age: 52,
       experienceYears: 9, pricePerHour: 4800, pricePeriod: 'YEAR', subject: 'Tarix', sector: 'Doktorantura', purpose: 'Dövlət qulluğu imtahanı', city: 'Gəncə',
       bio: 'Tarix üzrə dosent. Dövlət qulluğu və magistratura imtahanlarına hazırlıq. Xronologiya və hadisələri yadda saxlamaq üçün xüsusi mnemotexnikalar tətbiq edirəm.',
       showWhatsapp: true, showPhone: true, showEmail: true,
@@ -236,6 +219,7 @@ async function main() {
       data: {
         name: td.name, surname: td.surname, email: td.email, phone: td.phone,
         password: hash('teacher123'), role: 'TEACHER', emailVerified: true,
+        gender: td.gender ?? null, age: td.age ?? null,
       },
     })
     const profile = await db.teacherProfile.create({
@@ -248,6 +232,9 @@ async function main() {
         status: 'APPROVED',
         diplomaUrl: '/uploads/diplomas/demo-diploma.pdf',
         lessonFormats: td.lessonFormats ?? 'BOTH',
+        isVip: td.isVip ?? false,
+        groupLessons: td.groupLessons ?? false,
+        groupPrice: td.groupPrice ?? null,
         subjectId: subjects[td.subject],
         sectorId: sectors[td.sector],
         purposeId: purposes[td.purpose],
