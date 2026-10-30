@@ -12,8 +12,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
-import { useApp, DictKey } from '@/lib/store'
-import { useT } from '@/lib/i18n'
+import { useApp } from '@/lib/store'
+import { useT, DictKey } from '@/lib/i18n'
 import { toast } from '@/hooks/use-toast'
 
 // ── Necə işləyir ──

@@ -98,7 +98,7 @@ export function ProfileView() {
             {t('nav.login')}
           </Button>
           <Button variant="outline" onClick={() => setAuthOpen('student-register')}>
-            {t('auth.registerStudent')}
+            {t('nav.register')}
           </Button>
         </div>
       </div>

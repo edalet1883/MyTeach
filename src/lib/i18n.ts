@@ -282,7 +282,7 @@ export const dict = {
   'report.button': { az: 'Şikayət et', en: 'Report', ru: 'Жалоба' },
   'report.title': { az: 'Müəllimə şikayət', en: 'Report teacher', ru: 'Жалоба на учителя' },
   'report.reason': { az: 'Səbəb', en: 'Reason', ru: 'Причина' },
-  'report.reasonFake': { az: 'Yalançı / saxta profil', en: 'Fake profile', ru: 'Фейковый профиль' },
+  'report.reasonFake': { az: 'Şübhəli profil', en: 'Suspicious profile', ru: 'Подозрительный профиль' },
   'report.reasonPrice': { az: 'Elanla uyğunsuz ödəniş tələbi', en: 'Pricing differs from the listing', ru: 'Цена не соответствует объявлению' },
   'report.reasonOffensive': { az: 'Uyğunsuz məzmun və ya davranış', en: 'Inappropriate content or behavior', ru: 'Недопустимый контент или поведение' },
   'report.reasonOther': { az: 'Digər', en: 'Other', ru: 'Другое' },
@@ -334,6 +334,13 @@ export const dict = {
   'auth.benefit1': { az: 'Təsdiqlənmiş müəllimlər — diplomu yoxlanılıb', en: 'Verified teachers — diplomas are checked', ru: 'Проверенные учителя — дипломы проверены' },
   'auth.benefit2': { az: 'Birbaşa əlaqə — WhatsApp, telefon, e-poçt', en: 'Direct contact — WhatsApp, phone, email', ru: 'Прямая связь — WhatsApp, телефон, почта' },
   'auth.benefit3': { az: 'Favorilər, rəylər və şəxsi kabinet', en: 'Favorites, reviews and personal cabinet', ru: 'Избранное, отзывы и личный кабинет' },
+  'auth.roleQuestion': { az: 'Necə qeydiyyatdan keçmək istəyirsiniz?', en: 'How would you like to register?', ru: 'Как вы хотите зарегистрироваться?' },
+  'auth.roleQuestionSub': { az: 'Uyğun rolu seçin — qeydiyyat forması açılacaq', en: 'Choose your role — the matching form will open', ru: 'Выберите роль — откроется нужная форма' },
+  'auth.asStudent': { az: 'Şagird kimi', en: 'As a student', ru: 'Как ученик' },
+  'auth.asStudentDesc': { az: 'Müəllim axtarıram, dərslərə yazılıram', en: 'I look for teachers and book lessons', ru: 'Я ищу учителей и записываюсь на занятия' },
+  'auth.asTeacher': { az: 'Müəllim kimi', en: 'As a teacher', ru: 'Как учитель' },
+  'auth.asTeacherDesc': { az: 'Şagirdlərə dərs deyirəm, profil yaradıram', en: 'I teach students and create a profile', ru: 'Я преподаю ученикам и создаю профиль' },
+  'auth.backToRole': { az: 'Rolu dəyiş', en: 'Change role', ru: 'Сменить роль' },
 
   // ── Müəllim qeydiyyatı ──
   'treg.title': { az: 'Müəllim qeydiyyatı', en: 'Teacher registration', ru: 'Регистрация учителя' },

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -131,18 +131,7 @@ function LoginDialogInner({ open }: { open: boolean }) {
                   className="font-semibold text-emerald-700 hover:underline"
                   onClick={() => setAuthOpen('student-register')}
                 >
-                  {t('auth.registerStudent')}
-                </button>
-              </div>
-              <div>
-                <button
-                  className="font-semibold text-emerald-700 hover:underline"
-                  onClick={() => {
-                    setAuthOpen(null)
-                    navigate('teacher-register')
-                  }}
-                >
-                  {t('auth.registerTeacher')}
+                  {t('auth.registerBtn')}
                 </button>
               </div>
             </div>
@@ -154,12 +143,19 @@ function LoginDialogInner({ open }: { open: boolean }) {
 }
 
 // Şagird qeydiyyatı — istənilən yerdən açılan şüşə dialoq (arxa fon bulanıq)
+// Əvvəlcə rol seçimi: "Müəllim yoxsa şagird olaraq qeydiyyatdan keçmək istəyirsiniz?"
 function StudentRegisterDialog({ open }: { open: boolean }) {
   const t = useT()
-  const { setAuthOpen, setUser } = useApp()
+  const { setAuthOpen, setUser, navigate } = useApp()
+  const [stage, setStage] = useState<'role' | 'student'>('role')
   const [form, setForm] = useState({ name: '', surname: '', email: '', phone: '', password: '' })
   const [loading, setLoading] = useState(false)
   const [verifyUrl, setVerifyUrl] = useState<string | null>(null)
+
+  // Hər açılışda rol seçimindən başlayır
+  useEffect(() => {
+    if (open) setStage('role')
+  }, [open])
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }))
@@ -206,9 +202,11 @@ function StudentRegisterDialog({ open }: { open: boolean }) {
         <div className="relative overflow-hidden bg-emerald-700 bg-[linear-gradient(135deg,#047857_0%,#059669_52%,#0d9488_100%)] px-6 pb-8 pt-8 text-center text-white">
           <MezunArt className="pointer-events-none absolute -right-7 -top-9 w-28 rotate-12 text-white/20" />
           <MezunArt className="pointer-events-none absolute -bottom-9 -left-7 w-20 -rotate-12 text-white/10" />
-          <h3 className="relative text-xl font-bold sm:text-2xl">{t('auth.studentRegTitle')}</h3>
+          <h3 className="relative text-xl font-bold sm:text-2xl">
+            {stage === 'role' ? t('auth.roleQuestion') : t('auth.studentRegTitle')}
+          </h3>
           <p className="relative mx-auto mt-1.5 max-w-xs text-sm leading-relaxed text-emerald-50/90">
-            {t('auth.studentRegSubtitle')}
+            {stage === 'role' ? t('auth.roleQuestionSub') : t('auth.studentRegSubtitle')}
           </p>
         </div>
 
@@ -239,8 +237,64 @@ function StudentRegisterDialog({ open }: { open: boolean }) {
               {t('auth.later')}
             </Button>
           </div>
+        ) : stage === 'role' ? (
+          /* Rol seçimi — müəllim yoxsa şagird */
+          <div className="space-y-3 p-6 sm:p-7">
+            <button
+              type="button"
+              onClick={() => setStage('student')}
+              className="group flex w-full items-center gap-4 rounded-2xl border border-slate-200 bg-white/60 p-4 text-left transition-all hover:-translate-y-0.5 hover:border-emerald-400 hover:shadow-md"
+            >
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sky-100 text-sky-600 transition-transform group-hover:scale-110">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                </svg>
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-semibold text-slate-900">{t('auth.asStudent')}</span>
+                <span className="mt-0.5 block text-xs leading-snug text-slate-500">{t('auth.asStudentDesc')}</span>
+              </span>
+              <span className="shrink-0 text-slate-300 transition-colors group-hover:text-emerald-600" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setAuthOpen(null)
+                navigate('teacher-register')
+              }}
+              className="group flex w-full items-center gap-4 rounded-2xl border border-slate-200 bg-white/60 p-4 text-left transition-all hover:-translate-y-0.5 hover:border-emerald-400 hover:shadow-md"
+            >
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-600 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-white shadow-md shadow-emerald-200 transition-transform group-hover:scale-110">
+                <MezunLogo size={24} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-semibold text-slate-900">{t('auth.asTeacher')}</span>
+                <span className="mt-0.5 block text-xs leading-snug text-slate-500">{t('auth.asTeacherDesc')}</span>
+              </span>
+              <span className="shrink-0 text-slate-300 transition-colors group-hover:text-emerald-600" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </span>
+            </button>
+          </div>
         ) : (
           <div className="p-6 sm:p-7">
+            <button
+              type="button"
+              onClick={() => setStage('role')}
+              className="mb-3 inline-flex items-center gap-1.5 text-xs font-medium text-slate-400 transition-colors hover:text-emerald-700"
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="m15 18-6-6 6-6" />
+              </svg>
+              {t('auth.backToRole')}
+            </button>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -311,6 +365,7 @@ function StudentRegisterDialog({ open }: { open: boolean }) {
 export function StudentRegisterView() {
   const t = useT()
   const { navigate, setUser } = useApp()
+  const [stage, setStage] = useState<'role' | 'student'>('role')
   const [form, setForm] = useState({ name: '', surname: '', email: '', phone: '', password: '' })
   const [loading, setLoading] = useState(false)
   const [verifyUrl, setVerifyUrl] = useState<string | null>(null)
@@ -354,15 +409,71 @@ export function StudentRegisterView() {
       <div className="relative overflow-hidden rounded-3xl bg-emerald-700 bg-[linear-gradient(135deg,#047857_0%,#059669_52%,#0d9488_100%)] px-6 pb-12 pt-9 text-center text-white">
         <MezunArt className="pointer-events-none absolute -right-8 -top-10 w-32 rotate-12 text-white/20 sm:w-36" />
         <MezunArt className="pointer-events-none absolute -bottom-9 -left-7 w-24 -rotate-12 text-white/10" />
-        <h1 className="relative text-2xl font-bold sm:text-3xl">{t('auth.studentRegTitle')}</h1>
+        <h1 className="relative text-2xl font-bold sm:text-3xl">
+          {stage === 'role' ? t('auth.roleQuestion') : t('auth.studentRegTitle')}
+        </h1>
         <p className="relative mx-auto mt-2 max-w-sm text-sm leading-relaxed text-emerald-50/90">
-          {t('auth.studentRegSubtitle')}
+          {stage === 'role' ? t('auth.roleQuestionSub') : t('auth.studentRegSubtitle')}
         </p>
       </div>
 
-      {/* Ağ form kartı — başlıq kartına qismən üst-üstə düşür */}
-      <div className="relative -mt-6 rounded-3xl border border-slate-200/60 bg-white/70 p-6 shadow-lg shadow-slate-900/5 backdrop-blur-xl sm:p-8">
+      {stage === 'role' ? (
+        /* Rol seçimi — müəllim yoxsa şagird */
+        <div className="relative -mt-6 space-y-3 rounded-3xl border border-slate-200/60 bg-white/70 p-6 shadow-lg shadow-slate-900/5 backdrop-blur-xl sm:p-8">
+          <button
+            type="button"
+            onClick={() => setStage('student')}
+            className="group flex w-full items-center gap-4 rounded-2xl border border-slate-200 bg-white/60 p-4 text-left transition-all hover:-translate-y-0.5 hover:border-emerald-400 hover:shadow-md"
+          >
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sky-100 text-sky-600 transition-transform group-hover:scale-110">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+              </svg>
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block font-semibold text-slate-900">{t('auth.asStudent')}</span>
+              <span className="mt-0.5 block text-xs leading-snug text-slate-500">{t('auth.asStudentDesc')}</span>
+            </span>
+            <span className="shrink-0 text-slate-300 transition-colors group-hover:text-emerald-600" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="m9 18 6-6-6-6" />
+              </svg>
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('teacher-register')}
+            className="group flex w-full items-center gap-4 rounded-2xl border border-slate-200 bg-white/60 p-4 text-left transition-all hover:-translate-y-0.5 hover:border-emerald-400 hover:shadow-md"
+          >
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-600 bg-[linear-gradient(135deg,#10b981_0%,#0d9488_100%)] text-white shadow-md shadow-emerald-200 transition-transform group-hover:scale-110">
+              <MezunLogo size={24} />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block font-semibold text-slate-900">{t('auth.asTeacher')}</span>
+              <span className="mt-0.5 block text-xs leading-snug text-slate-500">{t('auth.asTeacherDesc')}</span>
+            </span>
+            <span className="shrink-0 text-slate-300 transition-colors group-hover:text-emerald-600" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="m9 18 6-6-6-6" />
+              </svg>
+            </span>
+          </button>
+        </div>
+      ) : (
+        // Ağ form kartı — başlıq kartına qismən üst-üstə düşür
+        <div className="relative -mt-6 rounded-3xl border border-slate-200/60 bg-white/70 p-6 shadow-lg shadow-slate-900/5 backdrop-blur-xl sm:p-8">
         <div className="space-y-4">
+          <button
+            type="button"
+            onClick={() => setStage('role')}
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-400 transition-colors hover:text-emerald-700"
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="m15 18-6-6 6-6" />
+            </svg>
+            {t('auth.backToRole')}
+          </button>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label htmlFor="sr-name">{t('auth.name')}</Label>
@@ -423,7 +534,8 @@ export function StudentRegisterView() {
             </button>
           </div>
         </div>
-      </div>
+        </div>
+      )}
 
       {/* Gmail təsdiq dialogu */}
       <Dialog open={!!verifyUrl} onOpenChange={(o) => !o && navigate('profile')}>

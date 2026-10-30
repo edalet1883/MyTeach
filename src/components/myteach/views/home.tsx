@@ -67,12 +67,6 @@ export function HomeView() {
     { name: 'İnformatika', pos: 'right-[24%] top-[9%]', dur: '9.8s', delay: '1.8s' },
   ]
 
-  const howSteps = [
-    { titleKey: 'how.step1.title' as const, descKey: 'how.step1.desc' as const },
-    { titleKey: 'how.step2.title' as const, descKey: 'how.step2.desc' as const },
-    { titleKey: 'how.step3.title' as const, descKey: 'how.step3.desc' as const },
-  ]
-
   return (
     <div className="flex flex-col">
       {/* ── Hero ── */}
@@ -215,34 +209,6 @@ export function HomeView() {
               </Button>
             </div>
           )}
-        </div>
-      </section>
-
-      {/* ── Necə işləyir ── */}
-      <section className="border-y border-slate-100 bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-              {t('how.title')}
-            </h2>
-            <p className="mt-2 text-sm text-slate-500 sm:text-base">{t('how.subtitle')}</p>
-          </div>
-          <div className="mt-10 grid gap-5 md:grid-cols-3">
-            {howSteps.map((step, i) => (
-              <div key={i} className="relative rounded-2xl border border-slate-200 bg-white p-6">
-                <div className="absolute -top-3 left-6 flex h-7 w-7 items-center justify-center rounded-full bg-emerald-600 text-sm font-bold text-white">
-                  {i + 1}
-                </div>
-                <h3 className="mt-2 font-semibold text-slate-900">{t(step.titleKey)}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-500">{t(step.descKey)}</p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-6 text-center">
-            <Button variant="link" className="text-emerald-700" onClick={() => navigate('how-it-works')}>
-              {t('nav.howItWorks')}
-            </Button>
-          </div>
         </div>
       </section>
 

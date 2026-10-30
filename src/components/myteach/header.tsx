@@ -41,7 +41,6 @@ export function Header() {
     { key: 'home', labelKey: 'nav.home' },
     { key: 'categories', labelKey: 'nav.categories' },
     { key: 'teachers', labelKey: 'nav.teachers' },
-    { key: 'how-it-works', labelKey: 'nav.howItWorks' },
     { key: 'faq', labelKey: 'nav.faq' },
     { key: 'about', labelKey: 'nav.about' },
     { key: 'contact', labelKey: 'nav.contact' },
